@@ -9,6 +9,8 @@ import 'package:schulte_grid/domain/models/training_config.dart';
 import 'package:schulte_grid/modules/training/controllers/training_controller.dart';
 import 'package:schulte_grid/modules/training/views/training_view.dart';
 
+import '../../../support/fakes/fake_training_record_repository.dart';
+
 void main() {
   testWidgets('训练页首次点击格子后才显示数字并开始训练', (WidgetTester tester) async {
     final controller = TrainingController(
@@ -17,6 +19,7 @@ void main() {
         mode: TrainingMode.numbers,
         order: TrainingOrder.ascending,
       ),
+      recordRepository: FakeTrainingRecordRepository(),
       random: Random(2),
       timerTickInterval: const Duration(milliseconds: 10),
       errorFlashDuration: const Duration(milliseconds: 20),

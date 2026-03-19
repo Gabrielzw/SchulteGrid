@@ -7,6 +7,8 @@ import 'package:schulte_grid/domain/enums/training_session_status.dart';
 import 'package:schulte_grid/domain/models/training_config.dart';
 import 'package:schulte_grid/modules/training/controllers/training_controller.dart';
 
+import '../../../support/fakes/fake_training_record_repository.dart';
+
 void main() {
   group('TrainingController', () {
     test('会按模式和尺寸生成随机板面及目标顺序', () {
@@ -16,6 +18,7 @@ void main() {
           mode: TrainingMode.letters,
           order: TrainingOrder.descending,
         ),
+        recordRepository: FakeTrainingRecordRepository(),
         random: Random(11),
       );
 
@@ -44,6 +47,7 @@ void main() {
           mode: TrainingMode.numbers,
           order: TrainingOrder.ascending,
         ),
+        recordRepository: FakeTrainingRecordRepository(),
         random: Random(9),
       );
 
@@ -57,6 +61,7 @@ void main() {
           mode: TrainingMode.numbers,
           order: TrainingOrder.ascending,
         ),
+        recordRepository: FakeTrainingRecordRepository(),
         random: Random(7),
         timerTickInterval: const Duration(milliseconds: 10),
       );
@@ -93,6 +98,7 @@ void main() {
           mode: TrainingMode.numbers,
           order: TrainingOrder.ascending,
         ),
+        recordRepository: FakeTrainingRecordRepository(),
         random: Random(7),
         timerTickInterval: const Duration(milliseconds: 10),
       );
@@ -122,6 +128,7 @@ void main() {
           mode: TrainingMode.numbers,
           order: TrainingOrder.ascending,
         ),
+        recordRepository: FakeTrainingRecordRepository(),
         random: Random(5),
         errorFlashDuration: const Duration(milliseconds: 20),
       );
@@ -149,12 +156,14 @@ void main() {
     });
 
     test('按正确顺序完成后会停止计时并进入完成态', () async {
+      final repository = FakeTrainingRecordRepository();
       final controller = TrainingController(
         config: TrainingConfig(
           gridSize: 2,
           mode: TrainingMode.numbers,
           order: TrainingOrder.ascending,
         ),
+        recordRepository: repository,
         random: Random(3),
         timerTickInterval: const Duration(milliseconds: 10),
       );
@@ -176,6 +185,17 @@ void main() {
       expect(controller.progressLabel, '4/4');
       expect(controller.elapsedMilliseconds.value, completedElapsed);
       expect(controller.cells.every((cell) => cell.isCompleted), isTrue);
+      expect(repository.savedRecords, hasLength(1));
+      expect(repository.savedRecords.single.mode, TrainingMode.numbers.name);
+      expect(
+        repository.savedRecords.single.order,
+        TrainingOrder.ascending.name,
+      );
+      expect(repository.savedRecords.single.gridSize, 2);
+      expect(
+        repository.savedRecords.single.durationInMilliseconds,
+        completedElapsed,
+      );
     });
   });
 }

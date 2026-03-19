@@ -6,4 +6,10 @@ enum TrainingOrder {
 
   final String label;
   final String description;
+
+  String get storageValue => name;
+
+  static TrainingOrder fromStorageValue(String value) {
+    return values.byName(value);
+  }
 }

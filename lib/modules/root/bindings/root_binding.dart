@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 
+import '../../../data/repositories/training_record_repository.dart';
 import '../../history/controllers/history_controller.dart';
 import '../../home/controllers/home_controller.dart';
 import '../../stats/controllers/stats_controller.dart';
@@ -11,6 +12,8 @@ class RootBinding extends Bindings {
     Get.lazyPut<RootController>(RootController.new);
     Get.lazyPut<HomeController>(HomeController.new);
     Get.lazyPut<StatsController>(StatsController.new);
-    Get.lazyPut<HistoryController>(HistoryController.new);
+    Get.lazyPut<HistoryController>(
+      () => HistoryController(repository: Get.find<TrainingRecordRepository>()),
+    );
   }
 }

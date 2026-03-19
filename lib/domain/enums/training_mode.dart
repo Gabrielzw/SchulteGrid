@@ -29,4 +29,10 @@ enum TrainingMode {
   final String description;
   final IconData icon;
   final Color tone;
+
+  String get storageValue => name;
+
+  static TrainingMode fromStorageValue(String value) {
+    return values.byName(value);
+  }
 }

@@ -3,6 +3,8 @@ import 'dart:math';
 
 import 'package:get/get.dart';
 
+import '../../../data/models/training_record.dart';
+import '../../../data/repositories/training_record_repository.dart';
 import '../../../domain/enums/training_session_status.dart';
 import '../../../domain/models/training_config.dart';
 import '../../../domain/models/training_preview_cell.dart';
@@ -11,11 +13,13 @@ import '../models/training_session_support.dart';
 class TrainingController extends GetxController {
   TrainingController({
     required this.config,
+    required TrainingRecordRepository recordRepository,
     Random? random,
     bool autostart = false,
     Duration timerTickInterval = const Duration(milliseconds: 100),
     Duration errorFlashDuration = const Duration(milliseconds: 420),
   }) : _random = random ?? Random(),
+       _recordRepository = recordRepository,
        _timerTickInterval = timerTickInterval,
        _errorFlashDuration = errorFlashDuration {
     _initializeTraining();
@@ -26,6 +30,7 @@ class TrainingController extends GetxController {
 
   final TrainingConfig config;
   final Random _random;
+  final TrainingRecordRepository _recordRepository;
   final Duration _timerTickInterval;
   final Duration _errorFlashDuration;
 
@@ -249,6 +254,26 @@ class TrainingController extends GetxController {
     elapsedMilliseconds.value = _stopwatch.elapsedMilliseconds;
     sessionStatus.value = TrainingSessionStatus.completed;
     _rebuildCells();
+    unawaited(_saveCompletedRecord());
+  }
+
+  Future<void> _saveCompletedRecord() async {
+    try {
+      await _recordRepository.save(_buildTrainingRecord());
+    } catch (error, stackTrace) {
+      Get.snackbar('记录保存失败', '$error', snackPosition: SnackPosition.BOTTOM);
+      Zone.current.handleUncaughtError(error, stackTrace);
+    }
+  }
+
+  TrainingRecord _buildTrainingRecord() {
+    return TrainingRecord()
+      ..mode = config.mode.storageValue
+      ..order = config.order.storageValue
+      ..gridSize = config.gridSize
+      ..durationInMilliseconds = elapsedMilliseconds.value
+      ..errorCount = errorCount.value
+      ..completedAt = DateTime.now();
   }
 
   void _startTicker() {

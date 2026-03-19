@@ -1,9 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:get/get.dart';
 import 'package:schulte_grid/app/app.dart';
+import 'package:schulte_grid/data/repositories/training_record_repository.dart';
 import 'package:schulte_grid/modules/training/views/training_view.dart';
 
+import 'support/fakes/fake_training_record_repository.dart';
+
 void main() {
+  setUp(() {
+    Get.put<TrainingRecordRepository>(
+      FakeTrainingRecordRepository(),
+      permanent: true,
+    );
+  });
+
+  tearDown(Get.reset);
+
   testWidgets('renders training parameter configuration', (
     WidgetTester tester,
   ) async {

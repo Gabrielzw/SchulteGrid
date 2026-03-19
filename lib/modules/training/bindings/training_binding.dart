@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 
+import '../../../data/repositories/training_record_repository.dart';
 import '../../../domain/enums/training_mode.dart';
 import '../../../domain/enums/training_order.dart';
 import '../../../domain/models/training_config.dart';
@@ -9,7 +10,10 @@ class TrainingBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<TrainingController>(
-      () => TrainingController(config: _resolveConfig()),
+      () => TrainingController(
+        config: _resolveConfig(),
+        recordRepository: Get.find<TrainingRecordRepository>(),
+      ),
     );
   }
 
