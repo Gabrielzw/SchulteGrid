@@ -1,2 +1,1 @@
-export 'training_config_form.dart';
-export 'training_config_overview.dart';
+export 'training_setup_sections.dart';

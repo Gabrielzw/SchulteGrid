@@ -2,12 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../app/theme/app_theme.dart';
-import '../../../app/widgets/metric_tile.dart';
-import '../../../app/widgets/section_card.dart';
-import '../../../domain/models/training_config.dart';
-import '../../../domain/models/training_preview_cell.dart';
 import '../controllers/training_controller.dart';
-import '../widgets/training_grid_preview.dart';
+import '../widgets/training_sections.dart';
 
 class TrainingView extends GetView<TrainingController> {
   const TrainingView({super.key});
@@ -27,202 +23,39 @@ class TrainingView extends GetView<TrainingController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              _TrainingHeader(config: controller.config),
+              TrainingHeader(config: controller.config),
               const SizedBox(height: AppSpacing.lg),
-              _TrainingStatusSection(
+              TrainingStatusSection(
                 config: controller.config,
+                status: controller.sessionStatus.value,
+                statusLabel: controller.statusLabel,
+                statusDescription: controller.statusDescription,
                 nextTargetLabel: controller.nextTargetLabel,
+                timerLabel: controller.timerLabel,
+                progressLabel: controller.progressLabel,
+                errorCount: controller.errorCount.value,
                 targetSequencePreview: controller.targetSequencePreview,
+                actionLabel: controller.actionLabel,
                 showGuideLabels: controller.showGuideLabels.value,
+                resultSummary: controller.isCompleted
+                    ? controller.resultSummary
+                    : null,
+                onPrimaryAction: controller.handlePrimaryAction,
                 onToggleGuides: controller.setGuideLabels,
               ),
               const SizedBox(height: AppSpacing.lg),
-              _TrainingBoardSection(
-                config: controller.config,
+              TrainingBoardSection(
+                gridSize: controller.config.gridSize,
+                subtitle: controller.boardSubtitle,
                 cells: controller.cells,
                 showGuideLabels: controller.showGuideLabels.value,
+                isInteractionEnabled: controller.canInteract,
+                onCellTap: controller.handleCellTap,
               ),
-              const SizedBox(height: AppSpacing.lg),
-              _TrainingNoticeSection(message: controller.config.helperText),
             ],
           ),
         ),
       );
     });
-  }
-}
-
-class _TrainingHeader extends StatelessWidget {
-  const _TrainingHeader({required this.config});
-
-  final TrainingConfig config;
-
-  @override
-  Widget build(BuildContext context) {
-    return SectionCard(
-      title: '训练参数',
-      subtitle: '当前页面已按首页选择的模式、顺序和尺寸生成训练版式。',
-      child: Wrap(
-        spacing: AppSpacing.sm,
-        runSpacing: AppSpacing.sm,
-        children: <Widget>[
-          Chip(label: Text(config.mode.label)),
-          Chip(label: Text('${config.gridSize} x ${config.gridSize}')),
-          Chip(label: Text(config.orderLabel)),
-        ],
-      ),
-    );
-  }
-}
-
-class _TrainingStatusSection extends StatelessWidget {
-  const _TrainingStatusSection({
-    required this.config,
-    required this.nextTargetLabel,
-    required this.targetSequencePreview,
-    required this.showGuideLabels,
-    required this.onToggleGuides,
-  });
-
-  final TrainingConfig config;
-  final String nextTargetLabel;
-  final String targetSequencePreview;
-  final bool showGuideLabels;
-  final ValueChanged<bool> onToggleGuides;
-
-  @override
-  Widget build(BuildContext context) {
-    return SectionCard(
-      title: '状态区',
-      subtitle: '这里会显示当前顺序、起始目标和后续训练状态。',
-      child: Column(
-        children: <Widget>[
-          Wrap(
-            spacing: AppSpacing.sm,
-            runSpacing: AppSpacing.sm,
-            children: <Widget>[
-              MetricTile(
-                label: '下一目标',
-                value: nextTargetLabel,
-                icon: Icons.flag_outlined,
-                caption: config.orderLabel,
-              ),
-              MetricTile(
-                label: '总格数',
-                value: '${config.totalCells}',
-                icon: Icons.grid_view_rounded,
-              ),
-              MetricTile(
-                label: '点击规则',
-                value: config.orderLabel,
-                caption: config.selectionInstruction,
-                icon: Icons.swap_vert_rounded,
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.md),
-          _SequencePreview(sequencePreview: targetSequencePreview),
-          const SizedBox(height: AppSpacing.sm),
-          SwitchListTile(
-            contentPadding: EdgeInsets.zero,
-            value: showGuideLabels,
-            onChanged: onToggleGuides,
-            title: const Text('显示顺序辅助标签'),
-            subtitle: const Text('开启后会显示每个格子在正确点击序列中的位次。'),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _TrainingBoardSection extends StatelessWidget {
-  const _TrainingBoardSection({
-    required this.config,
-    required this.cells,
-    required this.showGuideLabels,
-  });
-
-  final TrainingConfig config;
-  final List<TrainingPreviewCell> cells;
-  final bool showGuideLabels;
-
-  @override
-  Widget build(BuildContext context) {
-    return SectionCard(
-      title: '方格画布',
-      subtitle: '方格内容已按所选模式随机打乱，辅助标签展示正确点击位次。',
-      child: TrainingGridPreview(
-        gridSize: config.gridSize,
-        cells: cells,
-        showGuideLabels: showGuideLabels,
-      ),
-    );
-  }
-}
-
-class _TrainingNoticeSection extends StatelessWidget {
-  const _TrainingNoticeSection({required this.message});
-
-  final String message;
-
-  @override
-  Widget build(BuildContext context) {
-    return SectionCard(
-      title: '当前实现范围',
-      subtitle: '随机生成与目标顺序计算已经完成，下面这些交互能力仍待接入。',
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(message, style: Theme.of(context).textTheme.bodyMedium),
-          const SizedBox(height: AppSpacing.md),
-          const _BulletLine(text: '自动计时与完成判定'),
-          const _BulletLine(text: '点击后推进下一目标'),
-          const _BulletLine(text: '错误点击反馈与振动'),
-          const _BulletLine(text: '训练记录写入 Isar 并联动统计页'),
-        ],
-      ),
-    );
-  }
-}
-
-class _SequencePreview extends StatelessWidget {
-  const _SequencePreview({required this.sequencePreview});
-
-  final String sequencePreview;
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Text(
-        '目标顺序：$sequencePreview',
-        style: Theme.of(context).textTheme.bodyMedium,
-      ),
-    );
-  }
-}
-
-class _BulletLine extends StatelessWidget {
-  const _BulletLine({required this.text});
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          const Padding(
-            padding: EdgeInsets.only(top: 6),
-            child: Icon(Icons.circle, size: AppSpacing.xs),
-          ),
-          const SizedBox(width: AppSpacing.sm),
-          Expanded(child: Text(text)),
-        ],
-      ),
-    );
   }
 }

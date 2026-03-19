@@ -44,10 +44,6 @@ class HomeController extends GetxController {
     gridSizeInput.value = '$gridSize';
   }
 
-  void updateGridSizeInput(String value) {
-    gridSizeInput.value = value.trim();
-  }
-
   void selectMode(TrainingMode mode) {
     selectedMode.value = mode;
   }
