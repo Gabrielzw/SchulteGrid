@@ -7,6 +7,7 @@ class TrainingGridPreview extends StatelessWidget {
   const TrainingGridPreview({
     required this.gridSize,
     required this.cells,
+    required this.revealLabels,
     required this.isInteractionEnabled,
     required this.onCellTap,
     super.key,
@@ -14,6 +15,7 @@ class TrainingGridPreview extends StatelessWidget {
 
   final int gridSize;
   final List<TrainingPreviewCell> cells;
+  final bool revealLabels;
   final bool isInteractionEnabled;
   final ValueChanged<String> onCellTap;
 
@@ -36,6 +38,7 @@ class TrainingGridPreview extends StatelessWidget {
           return _GridCell(
             cell: cells[index],
             gridSize: gridSize,
+            revealLabels: revealLabels,
             isInteractionEnabled: isInteractionEnabled,
             onTap: () => onCellTap(cells[index].label),
           );
@@ -49,12 +52,14 @@ class _GridCell extends StatelessWidget {
   const _GridCell({
     required this.cell,
     required this.gridSize,
+    required this.revealLabels,
     required this.isInteractionEnabled,
     required this.onTap,
   });
 
   final TrainingPreviewCell cell;
   final int gridSize;
+  final bool revealLabels;
   final bool isInteractionEnabled;
   final VoidCallback onTap;
 
@@ -85,7 +90,7 @@ class _GridCell extends StatelessWidget {
           ),
           child: Center(
             child: Text(
-              cell.displayLabel,
+              revealLabels ? cell.displayLabel : '',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 color: cell.foregroundColor,
                 fontWeight: FontWeight.w800,

@@ -147,6 +147,7 @@ class TrainingBoardPanel extends StatelessWidget {
   const TrainingBoardPanel({
     required this.gridSize,
     required this.cells,
+    required this.revealLabels,
     required this.isInteractionEnabled,
     required this.overlayLabel,
     required this.onCellTap,
@@ -155,6 +156,7 @@ class TrainingBoardPanel extends StatelessWidget {
 
   final int gridSize;
   final List<TrainingPreviewCell> cells;
+  final bool revealLabels;
   final bool isInteractionEnabled;
   final String? overlayLabel;
   final ValueChanged<String> onCellTap;
@@ -174,6 +176,7 @@ class TrainingBoardPanel extends StatelessWidget {
           child: TrainingGridPreview(
             gridSize: gridSize,
             cells: cells,
+            revealLabels: revealLabels,
             isInteractionEnabled: isInteractionEnabled,
             onCellTap: onCellTap,
           ),

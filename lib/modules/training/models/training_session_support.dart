@@ -56,6 +56,7 @@ List<TrainingPreviewCell> buildTrainingCells({
   required String? currentTargetLabel,
   required String? recentCorrectLabel,
   required bool highlightCompletedTrail,
+  required bool revealLabels,
 }) {
   return boardValues
       .map((String label) {
@@ -68,6 +69,7 @@ List<TrainingPreviewCell> buildTrainingCells({
           currentTargetLabel: currentTargetLabel,
           recentCorrectLabel: recentCorrectLabel,
           highlightCompletedTrail: highlightCompletedTrail,
+          revealLabels: revealLabels,
         );
       })
       .toList(growable: false);
@@ -104,6 +106,7 @@ TrainingPreviewCell _buildCell({
   required String? currentTargetLabel,
   required String? recentCorrectLabel,
   required bool highlightCompletedTrail,
+  required bool revealLabels,
 }) {
   final isCompleted = completedLabels.contains(label);
   final isError = errorLabel == label;
@@ -114,7 +117,7 @@ TrainingPreviewCell _buildCell({
 
   return TrainingPreviewCell(
     label: label,
-    displayLabel: formatTrainingLabel(config, label),
+    displayLabel: revealLabels ? formatTrainingLabel(config, label) : '',
     targetOrderLabel: '${targetOrderLookup[label]!}',
     isCompleted: isCompleted,
     isError: isError,

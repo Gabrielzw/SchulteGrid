@@ -50,7 +50,7 @@ void main() {
       expect(controller.displayNextTargetLabel, '01');
     });
 
-    test('开始训练后会进入进行中并推进计时', () async {
+    test('初始进入时不会计时，首次点击格子后才会开始', () async {
       final controller = TrainingController(
         config: TrainingConfig(
           gridSize: 3,
@@ -62,12 +62,28 @@ void main() {
       );
       addTearDown(controller.onClose);
 
-      controller.handlePrimaryAction();
+      expect(controller.sessionStatus.value, TrainingSessionStatus.ready);
+      expect(controller.elapsedMilliseconds.value, 0);
+      expect(
+        controller.cells.every((cell) => cell.displayLabel.isEmpty),
+        isTrue,
+      );
+
+      controller.handleCellTap(controller.cells.first.label);
       await Future<void>.delayed(const Duration(milliseconds: 35));
 
       expect(controller.sessionStatus.value, TrainingSessionStatus.running);
       expect(controller.elapsedMilliseconds.value, greaterThan(0));
       expect(controller.progressLabel, '0/9');
+      expect(controller.completedCount.value, 0);
+      expect(
+        controller.cells.every((cell) => cell.displayLabel.isNotEmpty),
+        isTrue,
+      );
+      expect(
+        controller.cells.every((cell) => cell.isCurrentTarget == false),
+        isTrue,
+      );
     });
 
     test('暂停后计时会冻结，继续后会恢复推进', () async {
@@ -82,7 +98,7 @@ void main() {
       );
       addTearDown(controller.onClose);
 
-      controller.handlePrimaryAction();
+      controller.handleCellTap(controller.cells.first.label);
       await Future<void>.delayed(const Duration(milliseconds: 30));
       controller.handlePrimaryAction();
 
@@ -111,7 +127,7 @@ void main() {
       );
       addTearDown(controller.onClose);
 
-      controller.handlePrimaryAction();
+      controller.handleCellTap(controller.cells.first.label);
       final wrongLabel = controller.cells
           .firstWhere((cell) => cell.label != controller.nextTargetLabel)
           .label;
@@ -144,7 +160,7 @@ void main() {
       );
       addTearDown(controller.onClose);
 
-      controller.handlePrimaryAction();
+      controller.handleCellTap(controller.cells.first.label);
       await Future<void>.delayed(const Duration(milliseconds: 30));
 
       for (final label in controller.targetSequence) {

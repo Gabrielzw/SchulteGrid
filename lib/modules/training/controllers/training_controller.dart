@@ -20,7 +20,7 @@ class TrainingController extends GetxController {
        _errorFlashDuration = errorFlashDuration {
     _initializeTraining();
     if (autostart) {
-      _startFreshSession(reshuffleBoard: false);
+      _revealBoardAndStart();
     }
   }
 
@@ -85,6 +85,11 @@ class TrainingController extends GetxController {
 
   bool get canInteract => sessionStatus.value == TrainingSessionStatus.running;
 
+  bool get canTapBoard =>
+      sessionStatus.value == TrainingSessionStatus.ready || canInteract;
+
+  bool get isReady => sessionStatus.value == TrainingSessionStatus.ready;
+
   bool get isRunning => sessionStatus.value == TrainingSessionStatus.running;
 
   bool get isPaused => sessionStatus.value == TrainingSessionStatus.paused;
@@ -92,12 +97,14 @@ class TrainingController extends GetxController {
   bool get isCompleted =>
       sessionStatus.value == TrainingSessionStatus.completed;
 
+  bool get isBoardRevealed => !isReady;
+
   String get primaryHint {
     switch (sessionStatus.value) {
       case TrainingSessionStatus.ready:
-        return '点击开始训练后立即开始计时。';
+        return '先点任意格子显示数字，再开始计时。';
       case TrainingSessionStatus.running:
-        return '按当前目标继续点击，计时进行中。';
+        return '数字已显示，按当前目标继续点击。';
       case TrainingSessionStatus.paused:
         return '点击继续训练后恢复计时和点击。';
       case TrainingSessionStatus.completed:
@@ -125,7 +132,6 @@ class TrainingController extends GetxController {
   void handlePrimaryAction() {
     switch (sessionStatus.value) {
       case TrainingSessionStatus.ready:
-        _startFreshSession(reshuffleBoard: false);
         return;
       case TrainingSessionStatus.running:
         pauseSession();
@@ -140,7 +146,7 @@ class TrainingController extends GetxController {
   }
 
   void restartSession() {
-    _startFreshSession(reshuffleBoard: true);
+    _prepareSession(reshuffleBoard: true);
   }
 
   void pauseSession() {
@@ -164,6 +170,11 @@ class TrainingController extends GetxController {
   }
 
   void handleCellTap(String label) {
+    if (isReady) {
+      _revealBoardAndStart();
+      return;
+    }
+
     if (!canInteract || _completedLabels.contains(label)) {
       return;
     }
@@ -202,21 +213,31 @@ class TrainingController extends GetxController {
     _rebuildCells();
   }
 
-  void _startFreshSession({required bool reshuffleBoard}) {
+  void _prepareSession({required bool reshuffleBoard}) {
     if (reshuffleBoard) {
       _boardValues = reshuffleBoardValues(_orderedValues, _random);
     }
 
     _cancelTimers();
     _stopwatch
-      ..reset()
-      ..start();
+      ..stop()
+      ..reset();
     _completedLabels.clear();
     completedCount.value = 0;
     errorCount.value = 0;
     elapsedMilliseconds.value = 0;
     _errorLabel.value = null;
     _lastCompletedLabel.value = null;
+    sessionStatus.value = TrainingSessionStatus.ready;
+    _rebuildCells();
+  }
+
+  void _revealBoardAndStart() {
+    _cancelTimers();
+    _stopwatch
+      ..reset()
+      ..start();
+    elapsedMilliseconds.value = 0;
     sessionStatus.value = TrainingSessionStatus.running;
     _rebuildCells();
     _startTicker();
@@ -278,9 +299,10 @@ class TrainingController extends GetxController {
         targetOrderLookup: _targetOrderLookup,
         completedLabels: _completedLabels,
         errorLabel: _errorLabel.value,
-        currentTargetLabel: isCompleted ? null : nextTargetLabel,
+        currentTargetLabel: null,
         recentCorrectLabel: _lastCompletedLabel.value,
         highlightCompletedTrail: isCompleted,
+        revealLabels: isBoardRevealed,
       ),
     );
   }

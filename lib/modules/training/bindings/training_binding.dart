@@ -9,7 +9,7 @@ class TrainingBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<TrainingController>(
-      () => TrainingController(config: _resolveConfig(), autostart: true),
+      () => TrainingController(config: _resolveConfig()),
     );
   }
 
