@@ -52,7 +52,9 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(TrainingView), findsOneWidget);
-      expect(find.text('5 x 5 字母训练'), findsOneWidget);
+      expect(find.text('专注训练'), findsOneWidget);
+      expect(find.text('当前目标'), findsOneWidget);
+      expect(find.text('准确率'), findsOneWidget);
     },
   );
 }

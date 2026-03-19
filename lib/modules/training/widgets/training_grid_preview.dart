@@ -7,7 +7,6 @@ class TrainingGridPreview extends StatelessWidget {
   const TrainingGridPreview({
     required this.gridSize,
     required this.cells,
-    required this.showGuideLabels,
     required this.isInteractionEnabled,
     required this.onCellTap,
     super.key,
@@ -15,29 +14,33 @@ class TrainingGridPreview extends StatelessWidget {
 
   final int gridSize;
   final List<TrainingPreviewCell> cells;
-  final bool showGuideLabels;
   final bool isInteractionEnabled;
   final ValueChanged<String> onCellTap;
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: cells.length,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: gridSize,
-        crossAxisSpacing: AppSpacing.sm,
-        mainAxisSpacing: AppSpacing.sm,
+    return AspectRatio(
+      aspectRatio: 1,
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: cells.length,
+        padding: EdgeInsets.zero,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: gridSize,
+          crossAxisSpacing: AppSpacing.sm,
+          mainAxisSpacing: AppSpacing.sm,
+          childAspectRatio: 1,
+        ),
+        itemBuilder: (BuildContext context, int index) {
+          return _GridCell(
+            cell: cells[index],
+            gridSize: gridSize,
+            isInteractionEnabled: isInteractionEnabled,
+            onTap: () => onCellTap(cells[index].label),
+          );
+        },
       ),
-      itemBuilder: (BuildContext context, int index) {
-        return _GridCell(
-          cell: cells[index],
-          showGuideLabels: showGuideLabels,
-          isInteractionEnabled: isInteractionEnabled,
-          onTap: () => onCellTap(cells[index].label),
-        );
-      },
     );
   }
 }
@@ -45,13 +48,13 @@ class TrainingGridPreview extends StatelessWidget {
 class _GridCell extends StatelessWidget {
   const _GridCell({
     required this.cell,
-    required this.showGuideLabels,
+    required this.gridSize,
     required this.isInteractionEnabled,
     required this.onTap,
   });
 
   final TrainingPreviewCell cell;
-  final bool showGuideLabels;
+  final int gridSize;
   final bool isInteractionEnabled;
   final VoidCallback onTap;
 
@@ -70,47 +73,25 @@ class _GridCell extends StatelessWidget {
             borderRadius: BorderRadius.circular(AppRadius.md),
             border: Border.all(
               color: cell.borderColor,
-              width: cell.isError ? 2 : 1,
+              width: cell.isCurrentTarget || cell.isError ? 2 : 1,
             ),
             boxShadow: <BoxShadow>[
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.04),
-                blurRadius: AppSpacing.sm,
-                offset: const Offset(0, 6),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
-          child: Stack(
-            children: <Widget>[
-              Center(
-                child: AnimatedOpacity(
-                  duration: const Duration(milliseconds: 180),
-                  opacity: cell.isCompleted ? 0.72 : 1,
-                  child: Text(
-                    cell.label,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: cell.foregroundColor,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
+          child: Center(
+            child: Text(
+              cell.displayLabel,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                color: cell.foregroundColor,
+                fontWeight: FontWeight.w800,
+                fontSize: _resolveFontSize(gridSize),
               ),
-              Positioned(
-                top: AppSpacing.xs,
-                right: AppSpacing.xs,
-                child: AnimatedOpacity(
-                  duration: const Duration(milliseconds: 180),
-                  opacity: showGuideLabels ? 1 : 0,
-                  child: _GuideBadge(label: cell.targetOrderLabel),
-                ),
-              ),
-              if (cell.isCompleted)
-                const Positioned(
-                  left: AppSpacing.xs,
-                  bottom: AppSpacing.xs,
-                  child: _CompletionBadge(),
-                ),
-            ],
+            ),
           ),
         ),
       ),
@@ -118,50 +99,15 @@ class _GridCell extends StatelessWidget {
   }
 }
 
-class _CompletionBadge extends StatelessWidget {
-  const _CompletionBadge();
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: AppColors.seed,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: const Padding(
-        padding: EdgeInsets.all(4),
-        child: Icon(Icons.check_rounded, size: 14, color: Colors.white),
-      ),
-    );
+double _resolveFontSize(int gridSize) {
+  if (gridSize >= 7) {
+    return 16;
   }
-}
-
-class _GuideBadge extends StatelessWidget {
-  const _GuideBadge({required this.label});
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: AppColors.seed.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: AppColors.seed.withValues(alpha: 0.24)),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.xs,
-          vertical: 4,
-        ),
-        child: Text(
-          label,
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color: AppColors.seed,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-      ),
-    );
+  if (gridSize == 6) {
+    return 18;
   }
+  if (gridSize == 5) {
+    return 20;
+  }
+  return 24;
 }

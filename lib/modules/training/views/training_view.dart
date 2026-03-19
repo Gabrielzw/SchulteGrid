@@ -12,47 +12,68 @@ class TrainingView extends GetView<TrainingController> {
   Widget build(BuildContext context) {
     return Obx(() {
       return Scaffold(
-        appBar: AppBar(title: Text(controller.title)),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.lg,
-            AppSpacing.sm,
-            AppSpacing.lg,
-            AppSpacing.xl,
+        body: DecoratedBox(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: <Color>[Color(0xFFF0F2F6), AppColors.canvas],
+            ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              TrainingHeader(config: controller.config),
-              const SizedBox(height: AppSpacing.lg),
-              TrainingStatusSection(
-                config: controller.config,
-                status: controller.sessionStatus.value,
-                statusLabel: controller.statusLabel,
-                statusDescription: controller.statusDescription,
-                nextTargetLabel: controller.nextTargetLabel,
-                timerLabel: controller.timerLabel,
-                progressLabel: controller.progressLabel,
-                errorCount: controller.errorCount.value,
-                targetSequencePreview: controller.targetSequencePreview,
-                actionLabel: controller.actionLabel,
-                showGuideLabels: controller.showGuideLabels.value,
-                resultSummary: controller.isCompleted
-                    ? controller.resultSummary
-                    : null,
-                onPrimaryAction: controller.handlePrimaryAction,
-                onToggleGuides: controller.setGuideLabels,
+          child: SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.lg,
+                AppSpacing.lg,
+                AppSpacing.lg,
+                AppSpacing.xl,
               ),
-              const SizedBox(height: AppSpacing.lg),
-              TrainingBoardSection(
-                gridSize: controller.config.gridSize,
-                subtitle: controller.boardSubtitle,
-                cells: controller.cells,
-                showGuideLabels: controller.showGuideLabels.value,
-                isInteractionEnabled: controller.canInteract,
-                onCellTap: controller.handleCellTap,
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 440),
+                  child: Column(
+                    children: <Widget>[
+                      TrainingSessionHero(
+                        eyebrow: controller.sessionEyebrow,
+                        timerLabel: controller.timerLabel,
+                        progressValue: controller.progressValue,
+                        metaLabel: controller.sessionMetaLabel,
+                        progressLabel: controller.progressLabel,
+                      ),
+                      const SizedBox(height: 40),
+                      TrainingSessionMetrics(
+                        targetTitle: controller.targetLabelTitle,
+                        targetValue: controller.displayNextTargetLabel,
+                        accuracyLabel: controller.accuracyLabel,
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+                      if (controller.isCompleted) ...<Widget>[
+                        TrainingSessionBanner(
+                          message: controller.completionSummary,
+                        ),
+                        const SizedBox(height: AppSpacing.lg),
+                      ],
+                      TrainingBoardPanel(
+                        gridSize: controller.config.gridSize,
+                        cells: controller.cells,
+                        isInteractionEnabled: controller.canInteract,
+                        overlayLabel: controller.isPaused ? '已暂停' : null,
+                        onCellTap: controller.handleCellTap,
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+                      TrainingSessionHint(message: controller.primaryHint),
+                      const SizedBox(height: 28),
+                      TrainingSessionActionBar(
+                        status: controller.sessionStatus.value,
+                        primaryLabel: controller.actionLabel,
+                        onPrimaryAction: controller.handlePrimaryAction,
+                        onRestart: controller.restartSession,
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ],
+            ),
           ),
         ),
       );

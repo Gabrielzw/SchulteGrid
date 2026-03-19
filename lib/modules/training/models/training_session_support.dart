@@ -11,8 +11,8 @@ import '../../../domain/models/training_preview_cell.dart';
 const int _alphabetOffset = 65;
 const Color _errorBackground = Color(0xFFFCE8E9);
 const Color _errorForeground = Color(0xFFB3261E);
-const Color _completedBackground = Color(0xFFE2F0EA);
-const Color _completedBorder = Color(0xFF6A9A8D);
+const Color _highlightBackground = Color(0xFFDCE6FF);
+const Color _highlightBorder = Color(0xFF8EABF0);
 
 class TrainingBoardSnapshot {
   const TrainingBoardSnapshot({
@@ -48,18 +48,26 @@ List<String> reshuffleBoardValues(List<String> orderedValues, Random random) {
 }
 
 List<TrainingPreviewCell> buildTrainingCells({
+  required TrainingConfig config,
   required List<String> boardValues,
   required Map<String, int> targetOrderLookup,
   required Set<String> completedLabels,
   required String? errorLabel,
+  required String? currentTargetLabel,
+  required String? recentCorrectLabel,
+  required bool highlightCompletedTrail,
 }) {
   return boardValues
       .map((String label) {
         return _buildCell(
+          config: config,
           label: label,
           targetOrderLookup: targetOrderLookup,
           completedLabels: completedLabels,
           errorLabel: errorLabel,
+          currentTargetLabel: currentTargetLabel,
+          recentCorrectLabel: recentCorrectLabel,
+          highlightCompletedTrail: highlightCompletedTrail,
         );
       })
       .toList(growable: false);
@@ -77,66 +85,97 @@ String formatTrainingDuration(Duration duration) {
   return '$minutes:$seconds.$centiseconds';
 }
 
+String formatTrainingLabel(TrainingConfig config, String label) {
+  final parsedNumber = int.tryParse(label);
+  if (config.mode != TrainingMode.numbers || parsedNumber == null) {
+    return label;
+  }
+
+  final width = config.totalCells.toString().length;
+  return label.padLeft(width, '0');
+}
+
 TrainingPreviewCell _buildCell({
+  required TrainingConfig config,
   required String label,
   required Map<String, int> targetOrderLookup,
   required Set<String> completedLabels,
   required String? errorLabel,
+  required String? currentTargetLabel,
+  required String? recentCorrectLabel,
+  required bool highlightCompletedTrail,
 }) {
   final isCompleted = completedLabels.contains(label);
   final isError = errorLabel == label;
+  final isCurrentTarget = currentTargetLabel == label;
+  final isRecentCorrect = highlightCompletedTrail
+      ? isCompleted
+      : recentCorrectLabel == label;
 
   return TrainingPreviewCell(
     label: label,
+    displayLabel: formatTrainingLabel(config, label),
     targetOrderLabel: '${targetOrderLookup[label]!}',
     isCompleted: isCompleted,
     isError: isError,
+    isCurrentTarget: isCurrentTarget,
+    isRecentCorrect: isRecentCorrect,
     backgroundColor: _resolveBackgroundColor(
-      isCompleted: isCompleted,
       isError: isError,
+      isRecentCorrect: isRecentCorrect,
     ),
     foregroundColor: _resolveForegroundColor(
-      isCompleted: isCompleted,
       isError: isError,
+      isCurrentTarget: isCurrentTarget,
+      isRecentCorrect: isRecentCorrect,
     ),
     borderColor: _resolveBorderColor(
-      isCompleted: isCompleted,
       isError: isError,
+      isCurrentTarget: isCurrentTarget,
+      isRecentCorrect: isRecentCorrect,
     ),
   );
 }
 
 Color _resolveBackgroundColor({
-  required bool isCompleted,
   required bool isError,
+  required bool isRecentCorrect,
 }) {
   if (isError) {
     return _errorBackground;
   }
-  if (isCompleted) {
-    return _completedBackground;
+  if (isRecentCorrect) {
+    return _highlightBackground;
   }
   return Colors.white;
 }
 
 Color _resolveForegroundColor({
-  required bool isCompleted,
   required bool isError,
+  required bool isCurrentTarget,
+  required bool isRecentCorrect,
 }) {
   if (isError) {
     return _errorForeground;
   }
-  return AppColors.seed;
+  if (isCurrentTarget || isRecentCorrect) {
+    return AppColors.seed;
+  }
+  return AppColors.textPrimary;
 }
 
-Color _resolveBorderColor({required bool isCompleted, required bool isError}) {
+Color _resolveBorderColor({
+  required bool isError,
+  required bool isCurrentTarget,
+  required bool isRecentCorrect,
+}) {
   if (isError) {
     return _errorForeground;
   }
-  if (isCompleted) {
-    return _completedBorder;
+  if (isCurrentTarget || isRecentCorrect) {
+    return _highlightBorder;
   }
-  return AppColors.border;
+  return Colors.transparent;
 }
 
 List<String> _buildOrderedValues(TrainingConfig config) {

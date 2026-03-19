@@ -12,15 +12,17 @@ class TrainingController extends GetxController {
   TrainingController({
     required this.config,
     Random? random,
+    bool autostart = false,
     Duration timerTickInterval = const Duration(milliseconds: 100),
     Duration errorFlashDuration = const Duration(milliseconds: 420),
   }) : _random = random ?? Random(),
        _timerTickInterval = timerTickInterval,
        _errorFlashDuration = errorFlashDuration {
     _initializeTraining();
+    if (autostart) {
+      _startFreshSession(reshuffleBoard: false);
+    }
   }
-
-  static const int _sequencePreviewCount = 6;
 
   final TrainingConfig config;
   final Random _random;
@@ -29,7 +31,6 @@ class TrainingController extends GetxController {
 
   final Rx<TrainingSessionStatus> sessionStatus =
       TrainingSessionStatus.ready.obs;
-  final RxBool showGuideLabels = true.obs;
   final RxInt elapsedMilliseconds = 0.obs;
   final RxInt errorCount = 0.obs;
   final RxInt completedCount = 0.obs;
@@ -38,6 +39,7 @@ class TrainingController extends GetxController {
   final Stopwatch _stopwatch = Stopwatch();
   final Set<String> _completedLabels = <String>{};
   final RxnString _errorLabel = RxnString();
+  final RxnString _lastCompletedLabel = RxnString();
 
   Timer? _ticker;
   Timer? _errorTimer;
@@ -46,8 +48,21 @@ class TrainingController extends GetxController {
   late final Map<String, int> _targetOrderLookup;
   late List<String> _boardValues;
 
-  String get title =>
-      '${config.gridSize} x ${config.gridSize} ${config.mode.shortLabel}训练';
+  String get sessionEyebrow {
+    switch (sessionStatus.value) {
+      case TrainingSessionStatus.ready:
+        return '准备开始';
+      case TrainingSessionStatus.running:
+        return '专注训练';
+      case TrainingSessionStatus.paused:
+        return '训练已暂停';
+      case TrainingSessionStatus.completed:
+        return '本轮完成';
+    }
+  }
+
+  String get sessionMetaLabel =>
+      '${config.gridSize} × ${config.gridSize} ${config.mode.shortLabel} · ${config.orderLabel}';
 
   String get nextTargetLabel {
     if (completedCount.value >= targetSequence.length) {
@@ -57,71 +72,95 @@ class TrainingController extends GetxController {
     return targetSequence[completedCount.value];
   }
 
-  String get targetSequencePreview {
-    final previewValues = targetSequence
-        .take(_sequencePreviewCount)
-        .join(' -> ');
-    if (targetSequence.length <= _sequencePreviewCount) {
-      return previewValues;
-    }
-
-    return '$previewValues -> ... -> ${targetSequence.last}';
-  }
+  String get displayNextTargetLabel => _formatDisplayLabel(nextTargetLabel);
 
   String get timerLabel =>
-      _formatDuration(Duration(milliseconds: elapsedMilliseconds.value));
+      formatTrainingDuration(Duration(milliseconds: elapsedMilliseconds.value));
 
   String get progressLabel => '${completedCount.value}/${config.totalCells}';
 
-  String get statusLabel => sessionStatus.value.label;
+  double get progressValue => completedCount.value / config.totalCells;
 
   String get actionLabel => sessionStatus.value.actionLabel;
 
   bool get canInteract => sessionStatus.value == TrainingSessionStatus.running;
 
+  bool get isRunning => sessionStatus.value == TrainingSessionStatus.running;
+
+  bool get isPaused => sessionStatus.value == TrainingSessionStatus.paused;
+
   bool get isCompleted =>
       sessionStatus.value == TrainingSessionStatus.completed;
 
-  String get statusDescription {
+  String get primaryHint {
     switch (sessionStatus.value) {
       case TrainingSessionStatus.ready:
-        return '点击开始训练后启动计时。';
+        return '点击开始训练后立即开始计时。';
       case TrainingSessionStatus.running:
-        return '请按正确顺序持续点击，计时进行中。';
+        return '按当前目标继续点击，计时进行中。';
+      case TrainingSessionStatus.paused:
+        return '点击继续训练后恢复计时和点击。';
       case TrainingSessionStatus.completed:
-        return '本轮训练已完成，计时已停止。';
+        return '本轮训练已完成，可以直接再来一局。';
     }
   }
 
-  String get boardSubtitle {
-    switch (sessionStatus.value) {
-      case TrainingSessionStatus.ready:
-        return '点击开始训练后启用点击校验与计时。';
-      case TrainingSessionStatus.running:
-        return '方格已随机打乱，点击正确目标会推进训练进度。';
-      case TrainingSessionStatus.completed:
-        return '本轮训练已结束，可以查看结果或重新开始。';
+  String get targetLabelTitle => '当前目标';
+
+  int get accuracyValue {
+    final attemptCount = completedCount.value + errorCount.value;
+    if (attemptCount == 0) {
+      return 100;
     }
+
+    final accuracy = completedCount.value / attemptCount;
+    return (accuracy * 100).round();
   }
 
-  String get resultSummary => '完成用时 $timerLabel，错误 ${errorCount.value} 次。';
+  String get accuracyLabel => '$accuracyValue%';
 
-  void setGuideLabels(bool value) {
-    showGuideLabels.value = value;
-  }
+  String get completionSummary =>
+      '用时 $timerLabel · 准确率 $accuracyLabel · 错误 ${errorCount.value} 次';
 
   void handlePrimaryAction() {
     switch (sessionStatus.value) {
       case TrainingSessionStatus.ready:
-        _startSession(reshuffleBoard: false);
+        _startFreshSession(reshuffleBoard: false);
         return;
       case TrainingSessionStatus.running:
-        _startSession(reshuffleBoard: true);
+        pauseSession();
+        return;
+      case TrainingSessionStatus.paused:
+        resumeSession();
         return;
       case TrainingSessionStatus.completed:
-        _startSession(reshuffleBoard: true);
+        restartSession();
         return;
     }
+  }
+
+  void restartSession() {
+    _startFreshSession(reshuffleBoard: true);
+  }
+
+  void pauseSession() {
+    if (!isRunning) {
+      return;
+    }
+
+    _stopwatch.stop();
+    _cancelTicker();
+    sessionStatus.value = TrainingSessionStatus.paused;
+  }
+
+  void resumeSession() {
+    if (!isPaused) {
+      return;
+    }
+
+    _stopwatch.start();
+    sessionStatus.value = TrainingSessionStatus.running;
+    _startTicker();
   }
 
   void handleCellTap(String label) {
@@ -135,6 +174,7 @@ class TrainingController extends GetxController {
     }
 
     _completedLabels.add(label);
+    _lastCompletedLabel.value = label;
     completedCount.value = _completedLabels.length;
     _clearErrorFeedback();
     _rebuildCells();
@@ -162,7 +202,7 @@ class TrainingController extends GetxController {
     _rebuildCells();
   }
 
-  void _startSession({required bool reshuffleBoard}) {
+  void _startFreshSession({required bool reshuffleBoard}) {
     if (reshuffleBoard) {
       _boardValues = reshuffleBoardValues(_orderedValues, _random);
     }
@@ -176,6 +216,7 @@ class TrainingController extends GetxController {
     errorCount.value = 0;
     elapsedMilliseconds.value = 0;
     _errorLabel.value = null;
+    _lastCompletedLabel.value = null;
     sessionStatus.value = TrainingSessionStatus.running;
     _rebuildCells();
     _startTicker();
@@ -183,13 +224,14 @@ class TrainingController extends GetxController {
 
   void _finishTraining() {
     _stopwatch.stop();
-    _ticker?.cancel();
+    _cancelTicker();
     elapsedMilliseconds.value = _stopwatch.elapsedMilliseconds;
     sessionStatus.value = TrainingSessionStatus.completed;
     _rebuildCells();
   }
 
   void _startTicker() {
+    _cancelTicker();
     _ticker = Timer.periodic(_timerTickInterval, (_) {
       elapsedMilliseconds.value = _stopwatch.elapsedMilliseconds;
     });
@@ -214,22 +256,40 @@ class TrainingController extends GetxController {
   }
 
   void _cancelTimers() {
+    _cancelTicker();
+    _cancelErrorTimer();
+  }
+
+  void _cancelTicker() {
     _ticker?.cancel();
+    _ticker = null;
+  }
+
+  void _cancelErrorTimer() {
     _errorTimer?.cancel();
+    _errorTimer = null;
   }
 
   void _rebuildCells() {
     cells.assignAll(
       buildTrainingCells(
+        config: config,
         boardValues: _boardValues,
         targetOrderLookup: _targetOrderLookup,
         completedLabels: _completedLabels,
         errorLabel: _errorLabel.value,
+        currentTargetLabel: isCompleted ? null : nextTargetLabel,
+        recentCorrectLabel: _lastCompletedLabel.value,
+        highlightCompletedTrail: isCompleted,
       ),
     );
   }
 
-  String _formatDuration(Duration duration) {
-    return formatTrainingDuration(duration);
+  String _formatDisplayLabel(String label) {
+    if (label == '完成') {
+      return label;
+    }
+
+    return formatTrainingLabel(config, label);
   }
 }

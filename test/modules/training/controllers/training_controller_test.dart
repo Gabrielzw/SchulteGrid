@@ -37,6 +37,19 @@ void main() {
       expect(aCell.targetOrderLabel, '16');
     });
 
+    test('数字模式会按总格数补零显示当前目标', () {
+      final controller = TrainingController(
+        config: TrainingConfig(
+          gridSize: 5,
+          mode: TrainingMode.numbers,
+          order: TrainingOrder.ascending,
+        ),
+        random: Random(9),
+      );
+
+      expect(controller.displayNextTargetLabel, '01');
+    });
+
     test('开始训练后会进入进行中并推进计时', () async {
       final controller = TrainingController(
         config: TrainingConfig(
@@ -55,6 +68,35 @@ void main() {
       expect(controller.sessionStatus.value, TrainingSessionStatus.running);
       expect(controller.elapsedMilliseconds.value, greaterThan(0));
       expect(controller.progressLabel, '0/9');
+    });
+
+    test('暂停后计时会冻结，继续后会恢复推进', () async {
+      final controller = TrainingController(
+        config: TrainingConfig(
+          gridSize: 3,
+          mode: TrainingMode.numbers,
+          order: TrainingOrder.ascending,
+        ),
+        random: Random(7),
+        timerTickInterval: const Duration(milliseconds: 10),
+      );
+      addTearDown(controller.onClose);
+
+      controller.handlePrimaryAction();
+      await Future<void>.delayed(const Duration(milliseconds: 30));
+      controller.handlePrimaryAction();
+
+      final pausedElapsed = controller.elapsedMilliseconds.value;
+      await Future<void>.delayed(const Duration(milliseconds: 30));
+
+      expect(controller.sessionStatus.value, TrainingSessionStatus.paused);
+      expect(controller.elapsedMilliseconds.value, pausedElapsed);
+
+      controller.handlePrimaryAction();
+      await Future<void>.delayed(const Duration(milliseconds: 30));
+
+      expect(controller.sessionStatus.value, TrainingSessionStatus.running);
+      expect(controller.elapsedMilliseconds.value, greaterThan(pausedElapsed));
     });
 
     test('错误点击会触发错误提示并在短暂延迟后清除', () async {
