@@ -69,8 +69,8 @@ class TrainingConfig {
   }
 
   String get helperText {
-    return '训练参数已配置完成，当前页面会按所选模式与尺寸展示训练版式。'
-        '计时、随机打乱和点击判定将在后续接入。';
+    return '训练参数已配置完成，当前页面会按所选模式生成随机训练内容，'
+        '并计算对应的正确点击顺序。计时与点击判定将在后续接入。';
   }
 
   static int _validateGridSize({

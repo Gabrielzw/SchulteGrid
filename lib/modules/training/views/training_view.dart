@@ -31,6 +31,8 @@ class TrainingView extends GetView<TrainingController> {
               const SizedBox(height: AppSpacing.lg),
               _TrainingStatusSection(
                 config: controller.config,
+                nextTargetLabel: controller.nextTargetLabel,
+                targetSequencePreview: controller.targetSequencePreview,
                 showGuideLabels: controller.showGuideLabels.value,
                 onToggleGuides: controller.setGuideLabels,
               ),
@@ -76,11 +78,15 @@ class _TrainingHeader extends StatelessWidget {
 class _TrainingStatusSection extends StatelessWidget {
   const _TrainingStatusSection({
     required this.config,
+    required this.nextTargetLabel,
+    required this.targetSequencePreview,
     required this.showGuideLabels,
     required this.onToggleGuides,
   });
 
   final TrainingConfig config;
+  final String nextTargetLabel;
+  final String targetSequencePreview;
   final bool showGuideLabels;
   final ValueChanged<bool> onToggleGuides;
 
@@ -97,7 +103,7 @@ class _TrainingStatusSection extends StatelessWidget {
             children: <Widget>[
               MetricTile(
                 label: '下一目标',
-                value: config.nextTargetHint,
+                value: nextTargetLabel,
                 icon: Icons.flag_outlined,
                 caption: config.orderLabel,
               ),
@@ -115,12 +121,14 @@ class _TrainingStatusSection extends StatelessWidget {
             ],
           ),
           const SizedBox(height: AppSpacing.md),
+          _SequencePreview(sequencePreview: targetSequencePreview),
+          const SizedBox(height: AppSpacing.sm),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             value: showGuideLabels,
             onChanged: onToggleGuides,
             title: const Text('显示顺序辅助标签'),
-            subtitle: const Text('仅用于当前布局预览，真实训练时可关闭。'),
+            subtitle: const Text('开启后会显示每个格子在正确点击序列中的位次。'),
           ),
         ],
       ),
@@ -143,7 +151,7 @@ class _TrainingBoardSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return SectionCard(
       title: '方格画布',
-      subtitle: '方格内容已按所选模式生成，真实训练时会在这里承载随机布局和点击反馈。',
+      subtitle: '方格内容已按所选模式随机打乱，辅助标签展示正确点击位次。',
       child: TrainingGridPreview(
         gridSize: config.gridSize,
         cells: cells,
@@ -162,17 +170,34 @@ class _TrainingNoticeSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return SectionCard(
       title: '当前实现范围',
-      subtitle: '训练参数配置已经打通，下面这些真实训练能力仍待接入。',
+      subtitle: '随机生成与目标顺序计算已经完成，下面这些交互能力仍待接入。',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(message, style: Theme.of(context).textTheme.bodyMedium),
           const SizedBox(height: AppSpacing.md),
-          const _BulletLine(text: '随机生成训练内容'),
           const _BulletLine(text: '自动计时与完成判定'),
+          const _BulletLine(text: '点击后推进下一目标'),
           const _BulletLine(text: '错误点击反馈与振动'),
           const _BulletLine(text: '训练记录写入 Isar 并联动统计页'),
         ],
+      ),
+    );
+  }
+}
+
+class _SequencePreview extends StatelessWidget {
+  const _SequencePreview({required this.sequencePreview});
+
+  final String sequencePreview;
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Text(
+        '目标顺序：$sequencePreview',
+        style: Theme.of(context).textTheme.bodyMedium,
       ),
     );
   }

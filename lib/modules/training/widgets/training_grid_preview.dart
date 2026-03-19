@@ -55,16 +55,55 @@ class _GridCell extends StatelessWidget {
           ),
         ],
       ),
-      child: Center(
-        child: AnimatedOpacity(
-          duration: const Duration(milliseconds: 180),
-          opacity: showGuideLabels ? 1 : 0,
-          child: Text(
-            cell.label,
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              color: cell.foregroundColor,
-              fontWeight: FontWeight.w700,
+      child: Stack(
+        children: <Widget>[
+          Center(
+            child: Text(
+              cell.label,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                color: cell.foregroundColor,
+                fontWeight: FontWeight.w700,
+              ),
             ),
+          ),
+          Positioned(
+            top: AppSpacing.xs,
+            right: AppSpacing.xs,
+            child: AnimatedOpacity(
+              duration: const Duration(milliseconds: 180),
+              opacity: showGuideLabels ? 1 : 0,
+              child: _GuideBadge(label: cell.targetOrderLabel),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _GuideBadge extends StatelessWidget {
+  const _GuideBadge({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: AppColors.seed.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: AppColors.seed.withValues(alpha: 0.24)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.xs,
+          vertical: 4,
+        ),
+        child: Text(
+          label,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: AppColors.seed,
+            fontWeight: FontWeight.w700,
           ),
         ),
       ),
