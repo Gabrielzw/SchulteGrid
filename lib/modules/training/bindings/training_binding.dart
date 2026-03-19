@@ -19,7 +19,7 @@ class TrainingBinding extends Bindings {
       return arguments;
     }
 
-    return const TrainingConfig(
+    return TrainingConfig(
       gridSize: 5,
       mode: TrainingMode.numbers,
       order: TrainingOrder.ascending,

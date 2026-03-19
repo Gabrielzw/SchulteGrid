@@ -96,7 +96,7 @@ class _HistoryStructureSection extends StatelessWidget {
         children: const <Widget>[
           _HistoryFieldTile(title: '完成时间', description: '用于时间倒序排序和回顾训练节奏。'),
           SizedBox(height: AppSpacing.sm),
-          _HistoryFieldTile(title: '训练模式', description: '区分标准数字、倒序、字母与颜色模式。'),
+          _HistoryFieldTile(title: '训练模式', description: '区分数字模式、字母模式以及正序/倒序。'),
           SizedBox(height: AppSpacing.sm),
           _HistoryFieldTile(
             title: '方格尺寸',

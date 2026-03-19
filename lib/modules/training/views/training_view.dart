@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import '../../../app/theme/app_theme.dart';
 import '../../../app/widgets/metric_tile.dart';
 import '../../../app/widgets/section_card.dart';
-import '../../../domain/enums/training_mode.dart';
 import '../../../domain/models/training_config.dart';
 import '../../../domain/models/training_preview_cell.dart';
 import '../controllers/training_controller.dart';
@@ -59,8 +58,8 @@ class _TrainingHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SectionCard(
-      title: '训练界面骨架',
-      subtitle: '当前只展示布局和视觉层级，方便后续接入真实训练逻辑。',
+      title: '训练参数',
+      subtitle: '当前页面已按首页选择的模式、顺序和尺寸生成训练版式。',
       child: Wrap(
         spacing: AppSpacing.sm,
         runSpacing: AppSpacing.sm,
@@ -89,7 +88,7 @@ class _TrainingStatusSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return SectionCard(
       title: '状态区',
-      subtitle: '后续这里会显示计时器、下一目标和错误反馈。',
+      subtitle: '这里会显示当前顺序、起始目标和后续训练状态。',
       child: Column(
         children: <Widget>[
           Wrap(
@@ -100,16 +99,18 @@ class _TrainingStatusSection extends StatelessWidget {
                 label: '下一目标',
                 value: config.nextTargetHint,
                 icon: Icons.flag_outlined,
+                caption: config.orderLabel,
               ),
               MetricTile(
                 label: '总格数',
                 value: '${config.totalCells}',
                 icon: Icons.grid_view_rounded,
               ),
-              const MetricTile(
-                label: '计时状态',
-                value: '待接入',
-                icon: Icons.timer_outlined,
+              MetricTile(
+                label: '点击规则',
+                value: config.orderLabel,
+                caption: config.selectionInstruction,
+                icon: Icons.swap_vert_rounded,
               ),
             ],
           ),
@@ -142,20 +143,13 @@ class _TrainingBoardSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return SectionCard(
       title: '方格画布',
-      subtitle: _resolveSubtitle(config.mode),
+      subtitle: '方格内容已按所选模式生成，真实训练时会在这里承载随机布局和点击反馈。',
       child: TrainingGridPreview(
         gridSize: config.gridSize,
         cells: cells,
         showGuideLabels: showGuideLabels,
       ),
     );
-  }
-
-  String _resolveSubtitle(TrainingMode mode) {
-    if (mode == TrainingMode.colors) {
-      return '颜色模式当前展示色阶布局，深浅判断逻辑后续接入。';
-    }
-    return '当前仅按顺序渲染占位内容，不执行随机打乱。';
   }
 }
 
@@ -167,8 +161,8 @@ class _TrainingNoticeSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SectionCard(
-      title: '待接入功能',
-      subtitle: '这里明确列出还没有实现的部分，避免把占位布局误当成真实能力。',
+      title: '当前实现范围',
+      subtitle: '训练参数配置已经打通，下面这些真实训练能力仍待接入。',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[

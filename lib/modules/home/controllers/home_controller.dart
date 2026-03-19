@@ -6,40 +6,67 @@ import '../../../domain/enums/training_order.dart';
 import '../../../domain/models/training_config.dart';
 
 class HomeController extends GetxController {
-  static const int _defaultGridSize = 5;
-  static const List<int> availableGridSizes = <int>[3, 4, 5, 6, 7];
+  static const String _defaultGridSizeInput = '5';
+  static const List<int> commonGridSizes = <int>[3, 4, 5, 6, 7];
 
-  final RxInt selectedGridSize = _defaultGridSize.obs;
+  final RxString gridSizeInput = _defaultGridSizeInput.obs;
   final Rx<TrainingMode> selectedMode = TrainingMode.numbers.obs;
   final Rx<TrainingOrder> selectedOrder = TrainingOrder.ascending.obs;
 
-  TrainingConfig get currentConfig {
+  int? get parsedGridSize => int.tryParse(gridSizeInput.value);
+
+  String? get gridSizeValidationMessage {
+    final gridSize = parsedGridSize;
+    if (gridSize == null) {
+      return '请输入有效的正整数网格大小。';
+    }
+
+    return TrainingConfig.validationMessage(
+      gridSize: gridSize,
+      mode: selectedMode.value,
+    );
+  }
+
+  TrainingConfig? get previewConfig {
+    final gridSize = parsedGridSize;
+    if (gridSize == null || gridSizeValidationMessage != null) {
+      return null;
+    }
+
     return TrainingConfig(
-      gridSize: selectedGridSize.value,
+      gridSize: gridSize,
       mode: selectedMode.value,
       order: selectedOrder.value,
     );
   }
 
   void selectGridSize(int gridSize) {
-    selectedGridSize.value = gridSize;
+    gridSizeInput.value = '$gridSize';
+  }
+
+  void updateGridSizeInput(String value) {
+    gridSizeInput.value = value.trim();
   }
 
   void selectMode(TrainingMode mode) {
     selectedMode.value = mode;
-    if (!mode.supportsReverse) {
-      selectedOrder.value = TrainingOrder.ascending;
-    }
   }
 
   void selectOrder(TrainingOrder order) {
-    if (!selectedMode.value.supportsReverse) {
-      return;
-    }
     selectedOrder.value = order;
   }
 
   void openTrainingPreview() {
-    Get.toNamed(AppRoutes.training, arguments: currentConfig);
+    final config = previewConfig;
+    if (config == null) {
+      Get.snackbar(
+        '参数无效',
+        gridSizeValidationMessage ?? '请检查训练参数后重试。',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    Get.toNamed(AppRoutes.training, arguments: config);
   }
 }

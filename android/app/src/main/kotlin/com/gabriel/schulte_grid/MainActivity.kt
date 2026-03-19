@@ -1,4 +1,4 @@
-package com.example.schulte_grid
+package com.gabriel.schulte_grid
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -115,7 +115,7 @@ class _ModeCoverageSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return SectionCard(
       title: '统计维度',
-      subtitle: '后续会按模式、尺寸、顺序做聚合，当前先完成版式。',
+      subtitle: '后续会按已支持的模式、尺寸和顺序做聚合统计。',
       child: Column(
         children: TrainingMode.values.map((TrainingMode mode) {
           return Padding(
