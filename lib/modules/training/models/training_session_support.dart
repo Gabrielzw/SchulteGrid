@@ -87,15 +87,7 @@ String formatTrainingDuration(Duration duration) {
   return '$minutes:$seconds.$centiseconds';
 }
 
-String formatTrainingLabel(TrainingConfig config, String label) {
-  final parsedNumber = int.tryParse(label);
-  if (config.mode != TrainingMode.numbers || parsedNumber == null) {
-    return label;
-  }
-
-  final width = config.totalCells.toString().length;
-  return label.padLeft(width, '0');
-}
+String formatTrainingLabel(String label) => label;
 
 TrainingPreviewCell _buildCell({
   required TrainingConfig config,
@@ -117,7 +109,7 @@ TrainingPreviewCell _buildCell({
 
   return TrainingPreviewCell(
     label: label,
-    displayLabel: revealLabels ? formatTrainingLabel(config, label) : '',
+    displayLabel: revealLabels ? formatTrainingLabel(label) : '',
     targetOrderLabel: '${targetOrderLookup[label]!}',
     isCompleted: isCompleted,
     isError: isError,

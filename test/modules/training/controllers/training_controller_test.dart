@@ -37,7 +37,7 @@ void main() {
       expect(aCell.targetOrderLabel, '16');
     });
 
-    test('数字模式会按总格数补零显示当前目标', () {
+    test('数字模式当前目标保持原始数字显示', () {
       final controller = TrainingController(
         config: TrainingConfig(
           gridSize: 5,
@@ -47,7 +47,7 @@ void main() {
         random: Random(9),
       );
 
-      expect(controller.displayNextTargetLabel, '01');
+      expect(controller.displayNextTargetLabel, '1');
     });
 
     test('初始进入时不会计时，首次点击格子后才会开始', () async {

@@ -31,13 +31,14 @@ class TrainingSessionHero extends StatelessWidget {
           style: textTheme.labelLarge?.copyWith(
             color: AppColors.textSecondary,
             fontWeight: FontWeight.w700,
-            letterSpacing: 2.8,
+            fontSize: 12,
+            letterSpacing: 2.2,
           ),
         ),
-        const SizedBox(height: AppSpacing.lg),
+        const SizedBox(height: AppSpacing.md),
         Text(
           timerLabel,
-          style: textTheme.displayLarge?.copyWith(
+          style: textTheme.displayMedium?.copyWith(
             color: AppColors.textPrimary,
             fontWeight: FontWeight.w800,
             fontFeatures: const <FontFeature>[FontFeature.tabularFigures()],
@@ -59,7 +60,7 @@ class TrainingSessionHero extends StatelessWidget {
         const SizedBox(height: AppSpacing.md),
         Text(
           metaLabel,
-          style: textTheme.bodyMedium?.copyWith(
+          style: textTheme.bodySmall?.copyWith(
             color: AppColors.textSecondary,
             fontWeight: FontWeight.w600,
           ),
@@ -67,9 +68,7 @@ class TrainingSessionHero extends StatelessWidget {
         const SizedBox(height: 6),
         Text(
           progressLabel,
-          style: textTheme.labelMedium?.copyWith(
-            color: AppColors.textSecondary,
-          ),
+          style: textTheme.labelSmall?.copyWith(color: AppColors.textSecondary),
         ),
       ],
     );
@@ -166,19 +165,22 @@ class TrainingBoardPanel extends StatelessWidget {
     return Stack(
       alignment: Alignment.center,
       children: <Widget>[
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(AppSpacing.sm),
-          decoration: BoxDecoration(
-            color: AppColors.surfaceMuted,
-            borderRadius: BorderRadius.circular(AppRadius.md),
-          ),
-          child: TrainingGridPreview(
-            gridSize: gridSize,
-            cells: cells,
-            revealLabels: revealLabels,
-            isInteractionEnabled: isInteractionEnabled,
-            onCellTap: onCellTap,
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 360),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(AppSpacing.sm),
+            decoration: BoxDecoration(
+              color: AppColors.surfaceMuted,
+              borderRadius: BorderRadius.circular(AppRadius.md),
+            ),
+            child: TrainingGridPreview(
+              gridSize: gridSize,
+              cells: cells,
+              revealLabels: revealLabels,
+              isInteractionEnabled: isInteractionEnabled,
+              onCellTap: onCellTap,
+            ),
           ),
         ),
         if (overlayLabel != null) _BoardOverlay(label: overlayLabel!),
@@ -227,7 +229,7 @@ class _MetricBlock extends StatelessWidget {
       children: <Widget>[
         Text(
           title,
-          style: textTheme.titleSmall?.copyWith(
+          style: textTheme.bodyMedium?.copyWith(
             color: AppColors.textSecondary,
             fontWeight: FontWeight.w600,
           ),
@@ -235,7 +237,7 @@ class _MetricBlock extends StatelessWidget {
         const SizedBox(height: AppSpacing.sm),
         Text(
           value,
-          style: textTheme.headlineLarge?.copyWith(
+          style: textTheme.headlineMedium?.copyWith(
             color: valueColor,
             fontWeight: FontWeight.w800,
             fontFeatures: const <FontFeature>[FontFeature.tabularFigures()],

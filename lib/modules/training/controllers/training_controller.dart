@@ -312,6 +312,6 @@ class TrainingController extends GetxController {
       return label;
     }
 
-    return formatTrainingLabel(config, label);
+    return formatTrainingLabel(label);
   }
 }
