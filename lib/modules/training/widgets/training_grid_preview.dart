@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../app/theme/app_theme.dart';
 import '../../../domain/models/training_preview_cell.dart';
 
 class TrainingGridPreview extends StatelessWidget {
@@ -21,6 +20,8 @@ class TrainingGridPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cellGap = _resolveCellGap(gridSize);
+
     return AspectRatio(
       aspectRatio: 1,
       child: GridView.builder(
@@ -30,8 +31,8 @@ class TrainingGridPreview extends StatelessWidget {
         padding: EdgeInsets.zero,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: gridSize,
-          crossAxisSpacing: AppSpacing.sm,
-          mainAxisSpacing: AppSpacing.sm,
+          crossAxisSpacing: cellGap,
+          mainAxisSpacing: cellGap,
           childAspectRatio: 1,
         ),
         itemBuilder: (BuildContext context, int index) {
@@ -65,17 +66,19 @@ class _GridCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final radius = _resolveCellRadius(gridSize);
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
         key: ValueKey<String>('training-cell-${cell.label}'),
-        borderRadius: BorderRadius.circular(AppRadius.md),
+        borderRadius: BorderRadius.circular(radius),
         onTap: isInteractionEnabled ? onTap : null,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
           decoration: BoxDecoration(
             color: cell.backgroundColor,
-            borderRadius: BorderRadius.circular(AppRadius.md),
+            borderRadius: BorderRadius.circular(radius),
             border: Border.all(
               color: cell.borderColor,
               width: cell.isCurrentTarget || cell.isError ? 2 : 1,
@@ -106,13 +109,33 @@ class _GridCell extends StatelessWidget {
 
 double _resolveFontSize(int gridSize) {
   if (gridSize >= 7) {
-    return 16;
-  }
-  if (gridSize == 6) {
     return 18;
   }
-  if (gridSize == 5) {
-    return 20;
+  if (gridSize == 6) {
+    return 22;
   }
-  return 24;
+  if (gridSize == 5) {
+    return 28;
+  }
+  return 32;
+}
+
+double _resolveCellGap(int gridSize) {
+  if (gridSize >= 6) {
+    return 4;
+  }
+  if (gridSize == 5) {
+    return 5;
+  }
+  return 6;
+}
+
+double _resolveCellRadius(int gridSize) {
+  if (gridSize >= 6) {
+    return 12;
+  }
+  if (gridSize == 5) {
+    return 14;
+  }
+  return 16;
 }

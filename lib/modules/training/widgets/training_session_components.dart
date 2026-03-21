@@ -4,117 +4,6 @@ import '../../../app/theme/app_theme.dart';
 import '../../../domain/models/training_preview_cell.dart';
 import 'training_grid_preview.dart';
 
-class TrainingSessionHero extends StatelessWidget {
-  const TrainingSessionHero({
-    required this.eyebrow,
-    required this.timerLabel,
-    required this.progressValue,
-    required this.metaLabel,
-    required this.progressLabel,
-    super.key,
-  });
-
-  final String eyebrow;
-  final String timerLabel;
-  final double progressValue;
-  final String metaLabel;
-  final String progressLabel;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
-    return Column(
-      children: <Widget>[
-        Text(
-          eyebrow,
-          style: textTheme.labelLarge?.copyWith(
-            color: AppColors.textSecondary,
-            fontWeight: FontWeight.w700,
-            fontSize: 12,
-            letterSpacing: 2.2,
-          ),
-        ),
-        const SizedBox(height: AppSpacing.md),
-        Text(
-          timerLabel,
-          style: textTheme.displayMedium?.copyWith(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.w800,
-            fontFeatures: const <FontFeature>[FontFeature.tabularFigures()],
-          ),
-        ),
-        const SizedBox(height: AppSpacing.md),
-        SizedBox(
-          width: 132,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(999),
-            child: LinearProgressIndicator(
-              value: progressValue,
-              minHeight: 3,
-              backgroundColor: AppColors.border,
-              valueColor: const AlwaysStoppedAnimation<Color>(AppColors.seed),
-            ),
-          ),
-        ),
-        const SizedBox(height: AppSpacing.md),
-        Text(
-          metaLabel,
-          style: textTheme.bodySmall?.copyWith(
-            color: AppColors.textSecondary,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 6),
-        Text(
-          progressLabel,
-          style: textTheme.labelSmall?.copyWith(color: AppColors.textSecondary),
-        ),
-      ],
-    );
-  }
-}
-
-class TrainingSessionMetrics extends StatelessWidget {
-  const TrainingSessionMetrics({
-    required this.targetTitle,
-    required this.targetValue,
-    required this.accuracyLabel,
-    super.key,
-  });
-
-  final String targetTitle;
-  final String targetValue;
-  final String accuracyLabel;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: <Widget>[
-        Expanded(
-          child: _MetricBlock(
-            title: targetTitle,
-            value: targetValue,
-            valueColor: AppColors.seed,
-          ),
-        ),
-        const SizedBox(width: AppSpacing.md),
-        Expanded(
-          child: Align(
-            alignment: Alignment.centerRight,
-            child: _MetricBlock(
-              title: '准确率',
-              value: accuracyLabel,
-              valueColor: AppColors.textPrimary,
-              crossAxisAlignment: CrossAxisAlignment.end,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 class TrainingSessionBanner extends StatelessWidget {
   const TrainingSessionBanner({required this.message, super.key});
 
@@ -165,14 +54,20 @@ class TrainingBoardPanel extends StatelessWidget {
     return Stack(
       alignment: Alignment.center,
       children: <Widget>[
-        ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 360),
+        Positioned.fill(
           child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(AppSpacing.sm),
+            padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
               color: AppColors.surfaceMuted,
-              borderRadius: BorderRadius.circular(AppRadius.md),
+              borderRadius: BorderRadius.circular(AppRadius.lg),
+              border: Border.all(color: AppColors.border),
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 24,
+                  offset: const Offset(0, 14),
+                ),
+              ],
             ),
             child: TrainingGridPreview(
               gridSize: gridSize,
@@ -203,47 +98,6 @@ class TrainingSessionHint extends StatelessWidget {
         height: 1.5,
       ),
       textAlign: TextAlign.center,
-    );
-  }
-}
-
-class _MetricBlock extends StatelessWidget {
-  const _MetricBlock({
-    required this.title,
-    required this.value,
-    required this.valueColor,
-    this.crossAxisAlignment = CrossAxisAlignment.start,
-  });
-
-  final String title;
-  final String value;
-  final Color valueColor;
-  final CrossAxisAlignment crossAxisAlignment;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
-    return Column(
-      crossAxisAlignment: crossAxisAlignment,
-      children: <Widget>[
-        Text(
-          title,
-          style: textTheme.bodyMedium?.copyWith(
-            color: AppColors.textSecondary,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        Text(
-          value,
-          style: textTheme.headlineMedium?.copyWith(
-            color: valueColor,
-            fontWeight: FontWeight.w800,
-            fontFeatures: const <FontFeature>[FontFeature.tabularFigures()],
-          ),
-        ),
-      ],
     );
   }
 }
