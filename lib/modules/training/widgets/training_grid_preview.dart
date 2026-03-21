@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../../domain/models/training_preview_cell.dart';
 
+const Duration _cellFeedbackAnimationDuration = Duration(milliseconds: 90);
+const Curve _cellFeedbackAnimationCurve = Curves.easeOutCubic;
+
 class TrainingGridPreview extends StatelessWidget {
   const TrainingGridPreview({
     required this.gridSize,
@@ -75,7 +78,8 @@ class _GridCell extends StatelessWidget {
         borderRadius: BorderRadius.circular(radius),
         onTap: isInteractionEnabled ? onTap : null,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
+          duration: _cellFeedbackAnimationDuration,
+          curve: _cellFeedbackAnimationCurve,
           decoration: BoxDecoration(
             color: cell.backgroundColor,
             borderRadius: BorderRadius.circular(radius),
