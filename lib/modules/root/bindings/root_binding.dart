@@ -11,7 +11,9 @@ class RootBinding extends Bindings {
   void dependencies() {
     Get.lazyPut<RootController>(RootController.new);
     Get.lazyPut<HomeController>(HomeController.new);
-    Get.lazyPut<StatsController>(StatsController.new);
+    Get.lazyPut<StatsController>(
+      () => StatsController(repository: Get.find<TrainingRecordRepository>()),
+    );
     Get.lazyPut<HistoryController>(
       () => HistoryController(repository: Get.find<TrainingRecordRepository>()),
     );

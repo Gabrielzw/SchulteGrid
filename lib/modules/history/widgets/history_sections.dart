@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../app/theme/app_theme.dart';
-import '../models/history_filter.dart';
 import '../models/history_record_view_data.dart';
 import 'history_cards.dart';
 import 'history_record_cards.dart';
@@ -25,7 +24,7 @@ class HistoryHeader extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.md),
         Text(
-          '回看最近的训练节奏，按模式筛选每一条成绩。',
+          '按时间范围、模式、尺寸和顺序回看每一条训练成绩。',
           style: textTheme.titleMedium?.copyWith(
             color: AppColors.textSecondary,
             height: 1.6,
@@ -63,24 +62,28 @@ class HistorySummarySection extends StatelessWidget {
   }
 }
 
-class HistoryFilterSection extends StatelessWidget {
-  const HistoryFilterSection({
-    required this.filters,
-    required this.selectedFilter,
+class HistorySegmentedFilterSection<T> extends StatelessWidget {
+  const HistorySegmentedFilterSection({
+    required this.title,
+    required this.options,
+    required this.selectedOption,
+    required this.labelBuilder,
     required this.onSelected,
     super.key,
   });
 
-  final List<HistoryFilter> filters;
-  final HistoryFilter selectedFilter;
-  final ValueChanged<HistoryFilter> onSelected;
+  final String title;
+  final List<T> options;
+  final T selectedOption;
+  final String Function(T option) labelBuilder;
+  final ValueChanged<T> onSelected;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        const _SectionHeader(title: '筛选模式'),
+        _SectionHeader(title: title),
         const SizedBox(height: AppSpacing.md),
         Container(
           decoration: BoxDecoration(
@@ -89,18 +92,61 @@ class HistoryFilterSection extends StatelessWidget {
           ),
           padding: const EdgeInsets.all(4),
           child: Row(
-            children: filters
+            children: options
                 .map(
-                  (HistoryFilter filter) => Expanded(
+                  (T option) => Expanded(
                     child: HistoryFilterCard(
-                      label: filter.label,
-                      isSelected: filter == selectedFilter,
-                      onTap: () => onSelected(filter),
+                      label: labelBuilder(option),
+                      isSelected: option == selectedOption,
+                      onTap: () => onSelected(option),
                     ),
                   ),
                 )
                 .toList(growable: false),
           ),
+        ),
+      ],
+    );
+  }
+}
+
+class HistoryWrapFilterSection<T> extends StatelessWidget {
+  const HistoryWrapFilterSection({
+    required this.title,
+    required this.options,
+    required this.selectedOption,
+    required this.labelBuilder,
+    required this.onSelected,
+    this.trailing,
+    super.key,
+  });
+
+  final String title;
+  final List<T> options;
+  final T selectedOption;
+  final String Function(T option) labelBuilder;
+  final ValueChanged<T> onSelected;
+  final String? trailing;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        _SectionHeader(title: title, trailing: trailing),
+        const SizedBox(height: AppSpacing.md),
+        Wrap(
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
+          children: options
+              .map(
+                (T option) => HistoryFilterChipCard(
+                  label: labelBuilder(option),
+                  isSelected: option == selectedOption,
+                  onTap: () => onSelected(option),
+                ),
+              )
+              .toList(growable: false),
         ),
       ],
     );

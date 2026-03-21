@@ -3,15 +3,13 @@ import 'package:schulte_grid/data/models/training_record.dart';
 import 'package:schulte_grid/domain/enums/record_time_range.dart';
 import 'package:schulte_grid/domain/enums/training_mode.dart';
 import 'package:schulte_grid/domain/enums/training_order.dart';
-import 'package:schulte_grid/modules/history/controllers/history_controller.dart';
-import 'package:schulte_grid/modules/history/models/history_mode_filter.dart';
-import 'package:schulte_grid/modules/history/models/history_order_filter.dart';
+import 'package:schulte_grid/modules/stats/controllers/stats_controller.dart';
 
 import '../../../support/fakes/fake_training_record_repository.dart';
 
 void main() {
-  group('HistoryController', () {
-    test('会按时间范围、模式、尺寸和顺序组合筛选', () async {
+  group('StatsController', () {
+    test('会按时间范围聚合核心指标和模式表现', () async {
       final now = DateTime(2026, 3, 20, 12);
       final repository = FakeTrainingRecordRepository(<TrainingRecord>[
         _buildRecord(
@@ -47,7 +45,7 @@ void main() {
           completedAt: DateTime(2026, 3, 20, 8, 30),
         ),
       ]);
-      final controller = HistoryController(
+      final controller = StatsController(
         repository: repository,
         nowProvider: () => now,
       );
@@ -56,32 +54,54 @@ void main() {
       await controller.refreshRecords();
 
       expect(controller.recordCount, 4);
-      expect(controller.bestDurationLabel, '00:09.20');
-      expect(controller.latestCompletionValueLabel, '03/20');
-      expect(controller.gridSizeOptions, containsAll(<int>[3, 4, 5, 6, 7]));
+      expect(controller.summaryMetrics[0].value, '00:09.20');
+      expect(controller.summaryMetrics[1].value, '00:11.50');
+      expect(controller.summaryMetrics[2].value, '4');
+      expect(controller.bestRecordHighlight?.durationLabel, '00:09.20');
+      expect(controller.bestRecordHighlight?.metaLabel, '正序 · 5 × 5');
+      expect(
+        controller.latestRecordHighlight?.completedAtLabel,
+        '2026/03/20 08:30',
+      );
 
-      controller.selectTimeRangeFilter(RecordTimeRange.last180Days);
-      expect(controller.recordCount, 3);
+      final numbersInsight = controller.modeInsights.firstWhere(
+        (insight) => insight.label == '数字',
+      );
+      expect(numbersInsight.sessionCountLabel, '2 次训练');
+      expect(numbersInsight.bestDurationLabel, '00:09.20');
 
-      controller.selectTimeRangeFilter(RecordTimeRange.last30Days);
+      controller.selectTimeRange(RecordTimeRange.last30Days);
+
       expect(controller.recordCount, 2);
-      expect(controller.recordsSectionSubtitle, contains('30天'));
+      expect(controller.summaryMetrics[0].value, '00:09.20');
+      expect(controller.summaryMetrics[1].value, '00:11.00');
 
-      controller.selectModeFilter(HistoryModeFilter.numbers);
-      controller.selectOrderFilter(HistoryOrderFilter.ascending);
-      controller.selectGridSize(5);
+      final filteredNumbersInsight = controller.modeInsights.firstWhere(
+        (insight) => insight.label == '数字',
+      );
+      final filteredLettersInsight = controller.modeInsights.firstWhere(
+        (insight) => insight.label == '字母',
+      );
 
-      expect(controller.recordCount, 1);
-      expect(controller.visibleRecords.single.modeLabel, '数字');
-      expect(controller.visibleRecords.single.orderLabel, '正序');
-      expect(controller.visibleRecords.single.gridLabel, '5 × 5');
-      expect(controller.visibleRecords.single.accuracyLabel, '96%');
-      expect(controller.recordsSectionSubtitle, contains('5 × 5'));
+      expect(filteredNumbersInsight.averageDurationLabel, '00:09.20');
+      expect(filteredLettersInsight.bestDurationLabel, '00:12.80');
+      expect(filteredLettersInsight.sessionCountLabel, '1 次训练');
+    });
 
-      controller.selectGridSize(4);
+    test('没有任何记录时会返回空态文案', () async {
+      final controller = StatsController(
+        repository: FakeTrainingRecordRepository(),
+        nowProvider: () => DateTime(2026, 3, 20, 12),
+      );
+
+      addTearDown(controller.onClose);
+      await controller.refreshRecords();
 
       expect(controller.recordCount, 0);
-      expect(controller.emptyMessage, contains('当前筛选条件下'));
+      expect(controller.summaryMetrics[0].value, '--');
+      expect(controller.summaryMetrics[1].value, '--');
+      expect(controller.summaryMetrics[2].value, '0');
+      expect(controller.emptyMessage, contains('完成至少一局训练后'));
     });
   });
 }
