@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:get/get.dart';
 
+import '../../../app/widgets/app_toast.dart';
 import '../../../data/models/training_record.dart';
 import '../../../data/repositories/training_record_repository.dart';
 import '../../../domain/enums/training_session_status.dart';
@@ -261,7 +262,7 @@ class TrainingController extends GetxController {
     try {
       await _recordRepository.save(_buildTrainingRecord());
     } catch (error, stackTrace) {
-      Get.snackbar('记录保存失败', '$error', snackPosition: SnackPosition.BOTTOM);
+      AppToast.showError(title: '记录保存失败', message: '$error');
       Zone.current.handleUncaughtError(error, stackTrace);
     }
   }

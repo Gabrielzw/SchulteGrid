@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../app/widgets/app_toast.dart';
 import '../../../data/services/app_data_backup_service.dart';
 import '../../../data/services/backup_file_access.dart';
 import '../../history/controllers/history_controller.dart';
@@ -34,6 +35,10 @@ class SettingsController extends GetxController {
       return;
     }
 
+    final AppToastHandle syncToast = AppToast.showSync(
+      title: '正在同步数据',
+      message: '正在整理训练记录和应用配置，请选择导出路径。',
+    );
     isExporting.value = true;
     statusMessage.value = null;
     try {
@@ -46,10 +51,13 @@ class SettingsController extends GetxController {
         return;
       }
 
+      syncToast.close();
       _showSuccess(title: '导出成功', message: '备份文件已保存到：$savedPath');
     } catch (error) {
+      syncToast.close();
       _showError(title: '导出备份失败', error: error);
     } finally {
+      syncToast.close();
       isExporting.value = false;
     }
   }
@@ -69,6 +77,10 @@ class SettingsController extends GetxController {
       return;
     }
 
+    final AppToastHandle syncToast = AppToast.showSync(
+      title: '正在同步数据',
+      message: '正在恢复训练记录和应用配置，请稍候。',
+    );
     isRestoring.value = true;
     statusMessage.value = null;
     try {
@@ -76,13 +88,16 @@ class SettingsController extends GetxController {
         file.contents,
       );
       await _refreshRecordViews();
+      syncToast.close();
       _showSuccess(
         title: '恢复成功',
         message: '已从 ${file.name} 恢复 ${summary.trainingRecordCount} 条训练记录。',
       );
     } catch (error) {
+      syncToast.close();
       _showError(title: '恢复备份失败', error: error);
     } finally {
+      syncToast.close();
       isRestoring.value = false;
     }
   }
@@ -119,13 +134,13 @@ class SettingsController extends GetxController {
 
   void _showSuccess({required String title, required String message}) {
     statusMessage.value = message;
-    Get.snackbar(title, message, snackPosition: SnackPosition.BOTTOM);
+    AppToast.showSuccess(title: title, message: message);
   }
 
   void _showError({required String title, required Object error}) {
     final String message = '$error';
     statusMessage.value = '$title：$message';
-    Get.snackbar(title, message, snackPosition: SnackPosition.BOTTOM);
+    AppToast.showError(title: title, message: message);
   }
 
   String _buildSuggestedFileName() {

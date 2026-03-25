@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 
 import '../../../app/routes/app_routes.dart';
+import '../../../app/widgets/app_toast.dart';
 import '../../../domain/enums/training_mode.dart';
 import '../../../domain/enums/training_order.dart';
 import '../../../domain/models/training_config.dart';
@@ -55,10 +56,9 @@ class HomeController extends GetxController {
   void openTrainingPreview() {
     final config = previewConfig;
     if (config == null) {
-      Get.snackbar(
-        '参数无效',
-        gridSizeValidationMessage ?? '请检查训练参数后重试。',
-        snackPosition: SnackPosition.BOTTOM,
+      AppToast.showError(
+        title: '参数无效',
+        message: gridSizeValidationMessage ?? '请检查训练参数后重试。',
       );
       return;
     }
