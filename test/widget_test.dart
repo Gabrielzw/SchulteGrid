@@ -31,10 +31,8 @@ void main() {
     expect(find.text('推荐：5 × 5'), findsOneWidget);
     expect(find.text('内容模式'), findsOneWidget);
     expect(find.text('顺序模式'), findsOneWidget);
-    expect(find.text('主题模式'), findsOneWidget);
-    expect(find.text('跟随系统'), findsWidgets);
-    expect(find.text('浅色'), findsOneWidget);
-    expect(find.text('深色'), findsOneWidget);
+    expect(find.text('设置'), findsOneWidget);
+    expect(find.text('主题模式'), findsNothing);
     expect(find.text('数字'), findsWidgets);
     expect(find.text('字母'), findsWidgets);
     expect(find.text('正序'), findsWidgets);
@@ -42,23 +40,32 @@ void main() {
     expect(find.text('开始训练'), findsOneWidget);
   });
 
-  testWidgets('theme mode selector updates app theme mode', (
-    WidgetTester tester,
-  ) async {
-    await tester.pumpWidget(const SchulteGridApp());
+  testWidgets(
+    'settings tab shows theme mode selector and updates app theme mode',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(const SchulteGridApp());
 
-    await tester.tap(find.text('深色'));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text('设置'));
+      await tester.pumpAndSettle();
 
-    expect(
-      Get.find<AppThemeController>().selectedMode.value,
-      AppThemeMode.dark,
-    );
-    expect(
-      tester.widget<GetMaterialApp>(find.byType(GetMaterialApp)).themeMode,
-      ThemeMode.dark,
-    );
-  });
+      expect(find.text('主题模式'), findsOneWidget);
+      expect(find.text('跟随系统'), findsWidgets);
+      expect(find.text('浅色'), findsOneWidget);
+      expect(find.text('深色'), findsOneWidget);
+
+      await tester.tap(find.text('深色'));
+      await tester.pumpAndSettle();
+
+      expect(
+        Get.find<AppThemeController>().selectedMode.value,
+        AppThemeMode.dark,
+      );
+      expect(
+        tester.widget<GetMaterialApp>(find.byType(GetMaterialApp)).themeMode,
+        ThemeMode.dark,
+      );
+    },
+  );
 
   testWidgets(
     'invalid letter setup blocks start until grid size is corrected',

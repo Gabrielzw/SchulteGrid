@@ -59,8 +59,6 @@ class HomeView extends GetView<HomeController> {
               children: <Widget>[
                 const TrainingSetupHeader(),
                 const SizedBox(height: 28),
-                const ThemeModeSection(),
-                const SizedBox(height: 28),
                 TrainingGridSizeSelector(
                   gridSizes: HomeController.commonGridSizes,
                   selectedGridSize: controller.parsedGridSize,

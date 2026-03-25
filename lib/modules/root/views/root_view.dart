@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../../../app/theme/app_theme.dart';
 import '../../history/views/history_view.dart';
 import '../../home/views/home_view.dart';
+import '../../settings/views/settings_view.dart';
 import '../../stats/views/stats_view.dart';
 import '../controllers/root_controller.dart';
 
@@ -14,6 +15,7 @@ class RootView extends GetView<RootController> {
     HomeView(),
     StatsView(),
     HistoryView(),
+    SettingsView(),
   ];
 
   static const List<NavigationDestination> _destinations =
@@ -21,6 +23,7 @@ class RootView extends GetView<RootController> {
         NavigationDestination(icon: Icon(Icons.grid_view_rounded), label: '训练'),
         NavigationDestination(icon: Icon(Icons.insights_outlined), label: '成绩'),
         NavigationDestination(icon: Icon(Icons.history_rounded), label: '历史'),
+        NavigationDestination(icon: Icon(Icons.settings_outlined), label: '设置'),
       ];
 
   @override
