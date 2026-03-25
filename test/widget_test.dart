@@ -35,6 +35,7 @@ void main() {
     expect(find.text('正序'), findsWidgets);
     expect(find.text('倒序'), findsWidgets);
     expect(find.text('开始训练'), findsOneWidget);
+    expect(tester.widget<Text>(find.text('开始训练')).style?.color, Colors.white);
   });
 
   testWidgets(

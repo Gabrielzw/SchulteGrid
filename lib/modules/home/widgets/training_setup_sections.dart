@@ -155,7 +155,10 @@ class TrainingSetupPrimaryButton extends StatelessWidget {
         ),
         child: Text(
           '开始训练',
-          style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+          style: textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+          ),
         ),
       ),
     );
