@@ -48,16 +48,16 @@ class SettingsController extends GetxController {
         contents: json,
       );
       if (savedPath == null) {
+        await syncToast.closeAndWait();
         return;
       }
 
-      syncToast.close();
+      await syncToast.closeAndWait();
       _showSuccess(title: '导出成功', message: '备份文件已保存到：$savedPath');
     } catch (error) {
-      syncToast.close();
+      await syncToast.closeAndWait();
       _showError(title: '导出备份失败', error: error);
     } finally {
-      syncToast.close();
       isExporting.value = false;
     }
   }
@@ -88,16 +88,15 @@ class SettingsController extends GetxController {
         file.contents,
       );
       await _refreshRecordViews();
-      syncToast.close();
+      await syncToast.closeAndWait();
       _showSuccess(
         title: '恢复成功',
         message: '已从 ${file.name} 恢复 ${summary.trainingRecordCount} 条训练记录。',
       );
     } catch (error) {
-      syncToast.close();
+      await syncToast.closeAndWait();
       _showError(title: '恢复备份失败', error: error);
     } finally {
-      syncToast.close();
       isRestoring.value = false;
     }
   }

@@ -42,12 +42,12 @@ void main() {
     expect(find.byTooltip('关闭提示'), findsNWidgets(3));
   });
 
-  testWidgets('AppToast 支持手动关闭单条提示', (WidgetTester tester) async {
+  testWidgets('AppToast 支持单条关闭并带退出动画', (WidgetTester tester) async {
     await tester.pumpWidget(
       buildTestApp(const Scaffold(body: SizedBox.expand())),
     );
 
-    AppToast.showSuccess(
+    final AppToastHandle successToast = AppToast.showSuccess(
       title: 'Session Saved',
       message: 'Focal metrics recorded to your history.',
       duration: null,
@@ -58,8 +58,14 @@ void main() {
       duration: null,
     );
     await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200));
 
-    await tester.tap(find.byTooltip('关闭提示').first);
+    successToast.close();
+    await tester.pump();
+
+    expect(find.text('Session Saved'), findsOneWidget);
+
+    await tester.pump(const Duration(milliseconds: 200));
     await tester.pumpAndSettle();
 
     expect(find.text('Session Saved'), findsNothing);
