@@ -20,6 +20,14 @@ class FakeTrainingRecordRepository implements TrainingRecordRepository {
   }
 
   @override
+  Future<void> replaceAll(List<TrainingRecord> records) async {
+    _records
+      ..clear()
+      ..addAll(records);
+    _sortRecords();
+  }
+
+  @override
   Future<void> save(TrainingRecord record) async {
     _records.add(record);
     _sortRecords();

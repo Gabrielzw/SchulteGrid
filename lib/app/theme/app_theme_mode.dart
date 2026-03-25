@@ -32,10 +32,21 @@ enum AppThemeMode {
   final ThemeMode materialMode;
   final IconData icon;
 
+  static AppThemeMode? tryFromStorageValue(String value) {
+    for (final AppThemeMode mode in values) {
+      if (mode.storageValue == value) {
+        return mode;
+      }
+    }
+
+    return null;
+  }
+
   static AppThemeMode fromStorageValue(String? value) {
-    return values.firstWhere(
-      (AppThemeMode mode) => mode.storageValue == value,
-      orElse: () => AppThemeMode.system,
-    );
+    if (value == null) {
+      return AppThemeMode.system;
+    }
+
+    return tryFromStorageValue(value) ?? AppThemeMode.system;
   }
 }

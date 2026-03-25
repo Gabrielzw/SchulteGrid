@@ -14,6 +14,14 @@ class IsarTrainingRecordRepository implements TrainingRecordRepository {
   }
 
   @override
+  Future<void> replaceAll(List<TrainingRecord> records) {
+    return _isar.writeTxn(() async {
+      await _isar.trainingRecords.clear();
+      await _isar.trainingRecords.putAll(records);
+    });
+  }
+
+  @override
   Future<void> save(TrainingRecord record) {
     return _isar.writeTxn(() async {
       await _isar.trainingRecords.put(record);

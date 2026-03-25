@@ -8,7 +8,7 @@ import '../../../support/test_app.dart';
 
 void main() {
   setUp(() async {
-    await registerTestThemeController();
+    await registerTestSettingsController();
   });
 
   tearDown(Get.reset);
@@ -18,6 +18,9 @@ void main() {
 
     expect(find.text('设置'), findsOneWidget);
     expect(find.text('主题模式'), findsOneWidget);
+    expect(find.text('数据备份与恢复'), findsOneWidget);
+    expect(find.text('导出备份'), findsOneWidget);
+    expect(find.text('恢复备份'), findsOneWidget);
     expect(find.text('跟随系统'), findsWidgets);
     expect(find.text('浅色'), findsOneWidget);
     expect(find.text('深色'), findsOneWidget);

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../app/theme/app_theme.dart';
+import '../widgets/data_backup_section.dart';
 import '../widgets/theme_mode_section.dart';
 
 class SettingsView extends StatelessWidget {
@@ -24,6 +25,8 @@ class SettingsView extends StatelessWidget {
               _SettingsHeader(),
               SizedBox(height: 28),
               ThemeModeSection(),
+              SizedBox(height: AppSpacing.lg),
+              DataBackupSection(),
             ],
           ),
         ),

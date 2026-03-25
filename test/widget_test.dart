@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:schulte_grid/app/app.dart';
 import 'package:schulte_grid/app/theme/app_theme_controller.dart';
 import 'package:schulte_grid/app/theme/app_theme_mode.dart';
-import 'package:schulte_grid/data/repositories/training_record_repository.dart';
 import 'package:schulte_grid/modules/training/views/training_view.dart';
 
 import 'support/fakes/fake_training_record_repository.dart';
@@ -12,11 +11,9 @@ import 'support/test_app.dart';
 
 void main() {
   setUp(() async {
-    Get.put<TrainingRecordRepository>(
-      FakeTrainingRecordRepository(),
-      permanent: true,
+    await registerTestSettingsController(
+      repository: FakeTrainingRecordRepository(),
     );
-    await registerTestThemeController();
   });
 
   tearDown(Get.reset);
