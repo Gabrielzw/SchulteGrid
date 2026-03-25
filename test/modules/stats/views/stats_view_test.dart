@@ -7,6 +7,7 @@ import 'package:schulte_grid/modules/stats/controllers/stats_controller.dart';
 import 'package:schulte_grid/modules/stats/views/stats_view.dart';
 
 import '../../../support/fakes/fake_training_record_repository.dart';
+import '../../../support/test_app.dart';
 
 void main() {
   testWidgets('成绩页会展示真实统计区块和时间筛选', (WidgetTester tester) async {
@@ -31,7 +32,7 @@ void main() {
     });
     Get.put<StatsController>(controller);
 
-    await tester.pumpWidget(const GetMaterialApp(home: StatsView()));
+    await tester.pumpWidget(buildTestApp(const StatsView()));
     await tester.pumpAndSettle();
 
     expect(find.text('训练成绩'), findsOneWidget);

@@ -51,10 +51,11 @@ class _ActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final foregroundColor = isEmphasized ? Colors.white : AppColors.textPrimary;
+    final palette = context.appColors;
+    final foregroundColor = isEmphasized ? Colors.white : palette.textPrimary;
     final backgroundColor = isEmphasized
-        ? AppColors.seed
-        : const Color(0xFFDCE4EC);
+        ? Theme.of(context).colorScheme.primary
+        : palette.surfaceStrong;
 
     return SizedBox(
       height: 72,
@@ -88,6 +89,8 @@ class _IconActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
+
     return SizedBox(
       width: 72,
       height: 72,
@@ -95,8 +98,8 @@ class _IconActionButton extends StatelessWidget {
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           elevation: 0,
-          backgroundColor: const Color(0xFFEAEFF6),
-          foregroundColor: AppColors.textPrimary,
+          backgroundColor: palette.surfaceMuted,
+          foregroundColor: palette.textPrimary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadius.md),
           ),

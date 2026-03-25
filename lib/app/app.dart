@@ -4,26 +4,31 @@ import 'package:get/get.dart';
 
 import 'routes/app_pages.dart';
 import 'theme/app_theme.dart';
+import 'theme/app_theme_controller.dart';
 
-class SchulteGridApp extends StatelessWidget {
+class SchulteGridApp extends GetView<AppThemeController> {
   const SchulteGridApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      title: '舒尔特方格',
-      debugShowCheckedModeBanner: false,
-      locale: const Locale('zh', 'CN'),
-      fallbackLocale: const Locale('zh', 'CN'),
-      supportedLocales: const <Locale>[Locale('zh', 'CN')],
-      localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      theme: AppTheme.light(),
-      initialRoute: AppPages.initial,
-      getPages: AppPages.pages,
+    return Obx(
+      () => GetMaterialApp(
+        title: '舒尔特方格',
+        debugShowCheckedModeBanner: false,
+        locale: const Locale('zh', 'CN'),
+        fallbackLocale: const Locale('zh', 'CN'),
+        supportedLocales: const <Locale>[Locale('zh', 'CN')],
+        localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        theme: AppTheme.light(),
+        darkTheme: AppTheme.dark(),
+        themeMode: controller.selectedMode.value.materialMode,
+        initialRoute: AppPages.initial,
+        getPages: AppPages.pages,
+      ),
     );
   }
 }

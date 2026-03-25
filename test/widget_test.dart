@@ -2,17 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:schulte_grid/app/app.dart';
+import 'package:schulte_grid/app/theme/app_theme_controller.dart';
+import 'package:schulte_grid/app/theme/app_theme_mode.dart';
 import 'package:schulte_grid/data/repositories/training_record_repository.dart';
 import 'package:schulte_grid/modules/training/views/training_view.dart';
 
 import 'support/fakes/fake_training_record_repository.dart';
+import 'support/test_app.dart';
 
 void main() {
-  setUp(() {
+  setUp(() async {
     Get.put<TrainingRecordRepository>(
       FakeTrainingRecordRepository(),
       permanent: true,
     );
+    await registerTestThemeController();
   });
 
   tearDown(Get.reset);
@@ -27,12 +31,33 @@ void main() {
     expect(find.text('推荐：5 × 5'), findsOneWidget);
     expect(find.text('内容模式'), findsOneWidget);
     expect(find.text('顺序模式'), findsOneWidget);
+    expect(find.text('主题模式'), findsOneWidget);
+    expect(find.text('跟随系统'), findsWidgets);
+    expect(find.text('浅色'), findsOneWidget);
+    expect(find.text('深色'), findsOneWidget);
     expect(find.text('数字'), findsWidgets);
     expect(find.text('字母'), findsWidgets);
     expect(find.text('正序'), findsWidgets);
     expect(find.text('倒序'), findsWidgets);
     expect(find.text('开始训练'), findsOneWidget);
-    expect(find.text('颜色模式'), findsNothing);
+  });
+
+  testWidgets('theme mode selector updates app theme mode', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const SchulteGridApp());
+
+    await tester.tap(find.text('深色'));
+    await tester.pumpAndSettle();
+
+    expect(
+      Get.find<AppThemeController>().selectedMode.value,
+      AppThemeMode.dark,
+    );
+    expect(
+      tester.widget<GetMaterialApp>(find.byType(GetMaterialApp)).themeMode,
+      ThemeMode.dark,
+    );
   });
 
   testWidgets(
@@ -40,9 +65,13 @@ void main() {
     (WidgetTester tester) async {
       await tester.pumpWidget(const SchulteGridApp());
 
-      await tester.tap(find.text('7'));
+      final sevenOption = find.text('7').first;
+      await tester.ensureVisible(sevenOption);
+      await tester.tap(sevenOption);
       await tester.pumpAndSettle();
-      await tester.tap(find.text('字母'));
+      final letterOption = find.text('字母').first;
+      await tester.ensureVisible(letterOption);
+      await tester.tap(letterOption);
       await tester.pumpAndSettle();
 
       expect(find.text('字母模式最多支持 5 x 5，否则会超出 A-Z。'), findsOneWidget);
@@ -51,7 +80,9 @@ void main() {
         isNull,
       );
 
-      await tester.tap(find.text('5'));
+      final fiveOption = find.text('5').first;
+      await tester.ensureVisible(fiveOption);
+      await tester.tap(fiveOption);
       await tester.pumpAndSettle();
 
       expect(find.text('字母模式最多支持 5 x 5，否则会超出 A-Z。'), findsNothing);

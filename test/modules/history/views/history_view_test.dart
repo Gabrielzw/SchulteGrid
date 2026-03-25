@@ -7,6 +7,7 @@ import 'package:schulte_grid/modules/history/controllers/history_controller.dart
 import 'package:schulte_grid/modules/history/views/history_view.dart';
 
 import '../../../support/fakes/fake_training_record_repository.dart';
+import '../../../support/test_app.dart';
 
 void main() {
   testWidgets('历史页会展示新增筛选项', (WidgetTester tester) async {
@@ -31,7 +32,7 @@ void main() {
     });
     Get.put<HistoryController>(controller);
 
-    await tester.pumpWidget(const GetMaterialApp(home: HistoryView()));
+    await tester.pumpWidget(buildTestApp(const HistoryView()));
     await tester.pump();
 
     expect(find.text('时间范围'), findsOneWidget);

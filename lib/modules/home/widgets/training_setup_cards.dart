@@ -16,22 +16,24 @@ class TrainingGridSizeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
     final textTheme = Theme.of(context).textTheme;
+    final selectedColor = Theme.of(context).colorScheme.primary;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 180),
       height: 92,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: palette.cardBackground,
         borderRadius: BorderRadius.circular(AppRadius.md),
         border: Border.all(
-          color: isSelected ? AppColors.seed : Colors.transparent,
+          color: isSelected ? selectedColor : palette.border,
           width: isSelected ? 2 : 1,
         ),
         boxShadow: isSelected
             ? <BoxShadow>[
                 BoxShadow(
-                  color: AppColors.seed.withValues(alpha: 0.14),
+                  color: selectedColor.withValues(alpha: 0.18),
                   blurRadius: 18,
                   offset: const Offset(0, 8),
                 ),
@@ -50,7 +52,7 @@ class TrainingGridSizeCard extends StatelessWidget {
                 Text(
                   '$size',
                   style: textTheme.headlineSmall?.copyWith(
-                    color: isSelected ? AppColors.seed : AppColors.textPrimary,
+                    color: isSelected ? selectedColor : palette.textPrimary,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -58,7 +60,7 @@ class TrainingGridSizeCard extends StatelessWidget {
                 Text(
                   '$size × $size',
                   style: textTheme.labelMedium?.copyWith(
-                    color: AppColors.textSecondary,
+                    color: palette.textSecondary,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -87,22 +89,24 @@ class TrainingSegmentOptionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
     final textTheme = Theme.of(context).textTheme;
+    final selectedColor = Theme.of(context).colorScheme.primary;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 180),
       decoration: BoxDecoration(
-        color: isSelected ? Colors.white : Colors.transparent,
+        color: isSelected ? palette.cardBackground : Colors.transparent,
         borderRadius: BorderRadius.circular(AppRadius.md - 4),
         border: Border.all(
           color: isSelected
-              ? AppColors.seed.withValues(alpha: 0.22)
+              ? selectedColor.withValues(alpha: 0.22)
               : Colors.transparent,
         ),
         boxShadow: isSelected
             ? <BoxShadow>[
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
+                  color: palette.shadowColor,
                   blurRadius: 12,
                   offset: const Offset(0, 6),
                 ),
@@ -125,7 +129,7 @@ class TrainingSegmentOptionCard extends StatelessWidget {
                 Text(
                   label,
                   style: textTheme.titleMedium?.copyWith(
-                    color: isSelected ? AppColors.seed : AppColors.textPrimary,
+                    color: isSelected ? selectedColor : palette.textPrimary,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -133,7 +137,7 @@ class TrainingSegmentOptionCard extends StatelessWidget {
                 Text(
                   caption,
                   style: textTheme.labelMedium?.copyWith(
-                    color: AppColors.textSecondary,
+                    color: palette.textSecondary,
                     fontWeight: FontWeight.w500,
                   ),
                 ),

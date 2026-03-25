@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class TrainingPreviewCell {
   const TrainingPreviewCell({
     required this.label,
@@ -9,9 +7,6 @@ class TrainingPreviewCell {
     required this.isError,
     required this.isCurrentTarget,
     required this.isRecentCorrect,
-    required this.backgroundColor,
-    required this.foregroundColor,
-    required this.borderColor,
   });
 
   final String label;
@@ -21,7 +16,4 @@ class TrainingPreviewCell {
   final bool isError;
   final bool isCurrentTarget;
   final bool isRecentCorrect;
-  final Color backgroundColor;
-  final Color foregroundColor;
-  final Color borderColor;
 }

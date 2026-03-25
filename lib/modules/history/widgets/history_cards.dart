@@ -10,17 +10,18 @@ class HistoryMetricCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
     final textTheme = Theme.of(context).textTheme;
 
     return Container(
       width: 136,
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: palette.cardBackground,
         borderRadius: BorderRadius.circular(AppRadius.md),
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: palette.shadowColor,
             blurRadius: 16,
             offset: const Offset(0, 8),
           ),
@@ -29,7 +30,7 @@ class HistoryMetricCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Icon(metric.icon, color: AppColors.seed),
+          Icon(metric.icon, color: Theme.of(context).colorScheme.primary),
           const SizedBox(height: AppSpacing.sm),
           Text(
             metric.value,
@@ -46,7 +47,7 @@ class HistoryMetricCard extends StatelessWidget {
           Text(
             metric.caption,
             style: textTheme.bodySmall?.copyWith(
-              color: AppColors.textSecondary,
+              color: palette.textSecondary,
               height: 1.4,
             ),
           ),
@@ -70,22 +71,24 @@ class HistoryFilterCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
     final textTheme = Theme.of(context).textTheme;
+    final selectedColor = Theme.of(context).colorScheme.primary;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 180),
       decoration: BoxDecoration(
-        color: isSelected ? Colors.white : Colors.transparent,
+        color: isSelected ? palette.cardBackground : Colors.transparent,
         borderRadius: BorderRadius.circular(AppRadius.md - 4),
         border: Border.all(
           color: isSelected
-              ? AppColors.seed.withValues(alpha: 0.22)
+              ? selectedColor.withValues(alpha: 0.22)
               : Colors.transparent,
         ),
         boxShadow: isSelected
             ? <BoxShadow>[
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
+                  color: palette.shadowColor,
                   blurRadius: 12,
                   offset: const Offset(0, 6),
                 ),
@@ -106,7 +109,7 @@ class HistoryFilterCard extends StatelessWidget {
               label,
               textAlign: TextAlign.center,
               style: textTheme.titleMedium?.copyWith(
-                color: isSelected ? AppColors.seed : AppColors.textPrimary,
+                color: isSelected ? selectedColor : palette.textPrimary,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -131,22 +134,24 @@ class HistoryFilterChipCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
     final textTheme = Theme.of(context).textTheme;
+    final selectedColor = Theme.of(context).colorScheme.primary;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 180),
       decoration: BoxDecoration(
-        color: isSelected ? Colors.white : AppColors.surfaceMuted,
+        color: isSelected ? palette.cardBackground : palette.surfaceMuted,
         borderRadius: BorderRadius.circular(AppRadius.md),
         border: Border.all(
           color: isSelected
-              ? AppColors.seed.withValues(alpha: 0.22)
+              ? selectedColor.withValues(alpha: 0.22)
               : Colors.transparent,
         ),
         boxShadow: isSelected
             ? <BoxShadow>[
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
+                  color: palette.shadowColor,
                   blurRadius: 12,
                   offset: const Offset(0, 6),
                 ),
@@ -166,7 +171,7 @@ class HistoryFilterChipCard extends StatelessWidget {
             child: Text(
               label,
               style: textTheme.labelLarge?.copyWith(
-                color: isSelected ? AppColors.seed : AppColors.textPrimary,
+                color: isSelected ? selectedColor : palette.textPrimary,
                 fontWeight: FontWeight.w700,
               ),
             ),

@@ -26,18 +26,19 @@ class TrainingSessionDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
     final textTheme = Theme.of(context).textTheme;
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.82),
+        color: palette.cardBackground.withValues(alpha: 0.84),
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: palette.border),
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: palette.shadowColor,
             blurRadius: 18,
             offset: const Offset(0, 10),
           ),
@@ -53,7 +54,7 @@ class TrainingSessionDashboard extends StatelessWidget {
                 Text(
                   eyebrow,
                   style: textTheme.labelLarge?.copyWith(
-                    color: AppColors.textSecondary,
+                    color: palette.textSecondary,
                     fontWeight: FontWeight.w700,
                     fontSize: 12,
                     letterSpacing: 2.2,
@@ -63,7 +64,7 @@ class TrainingSessionDashboard extends StatelessWidget {
                 Text(
                   timerLabel,
                   style: textTheme.displaySmall?.copyWith(
-                    color: AppColors.textPrimary,
+                    color: palette.textPrimary,
                     fontWeight: FontWeight.w800,
                     fontFeatures: const <FontFeature>[
                       FontFeature.tabularFigures(),
@@ -74,7 +75,7 @@ class TrainingSessionDashboard extends StatelessWidget {
                 Text(
                   metaLabel,
                   style: textTheme.bodySmall?.copyWith(
-                    color: AppColors.textSecondary,
+                    color: palette.textSecondary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -84,9 +85,9 @@ class TrainingSessionDashboard extends StatelessWidget {
                   child: LinearProgressIndicator(
                     value: progressValue,
                     minHeight: 4,
-                    backgroundColor: AppColors.border,
-                    valueColor: const AlwaysStoppedAnimation<Color>(
-                      AppColors.seed,
+                    backgroundColor: palette.border,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Theme.of(context).colorScheme.primary,
                     ),
                   ),
                 ),
@@ -94,7 +95,7 @@ class TrainingSessionDashboard extends StatelessWidget {
                 Text(
                   progressLabel,
                   style: textTheme.labelSmall?.copyWith(
-                    color: AppColors.textSecondary,
+                    color: palette.textSecondary,
                   ),
                 ),
               ],
@@ -108,13 +109,13 @@ class TrainingSessionDashboard extends StatelessWidget {
                 _DashboardMetricCard(
                   title: targetTitle,
                   value: targetValue,
-                  valueColor: AppColors.seed,
+                  valueColor: Theme.of(context).colorScheme.primary,
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 _DashboardMetricCard(
                   title: '准确率',
                   value: accuracyLabel,
-                  valueColor: AppColors.textPrimary,
+                  valueColor: palette.textPrimary,
                 ),
               ],
             ),
@@ -138,6 +139,7 @@ class _DashboardMetricCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
     final textTheme = Theme.of(context).textTheme;
 
     return Container(
@@ -147,7 +149,7 @@ class _DashboardMetricCard extends StatelessWidget {
         vertical: AppSpacing.sm,
       ),
       decoration: BoxDecoration(
-        color: AppColors.surfaceMuted,
+        color: palette.surfaceMuted,
         borderRadius: BorderRadius.circular(AppRadius.md),
       ),
       child: Column(
@@ -156,7 +158,7 @@ class _DashboardMetricCard extends StatelessWidget {
           Text(
             title,
             style: textTheme.labelMedium?.copyWith(
-              color: AppColors.textSecondary,
+              color: palette.textSecondary,
               fontWeight: FontWeight.w700,
             ),
           ),

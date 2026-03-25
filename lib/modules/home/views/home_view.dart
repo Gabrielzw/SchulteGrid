@@ -58,7 +58,9 @@ class HomeView extends GetView<HomeController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 const TrainingSetupHeader(),
-                const SizedBox(height: 40),
+                const SizedBox(height: 28),
+                const ThemeModeSection(),
+                const SizedBox(height: 28),
                 TrainingGridSizeSelector(
                   gridSizes: HomeController.commonGridSizes,
                   selectedGridSize: controller.parsedGridSize,

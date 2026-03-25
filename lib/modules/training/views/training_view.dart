@@ -91,13 +91,15 @@ class _TrainingViewport extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
+
     return Scaffold(
       body: DecoratedBox(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: <Color>[Color(0xFFF0F2F6), AppColors.canvas],
+            colors: <Color>[palette.shellTop, palette.canvas],
           ),
         ),
         child: SafeArea(

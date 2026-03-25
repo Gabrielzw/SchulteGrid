@@ -10,6 +10,7 @@ class StatsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
     final textTheme = Theme.of(context).textTheme;
 
     return Column(
@@ -18,7 +19,7 @@ class StatsHeader extends StatelessWidget {
         Text(
           '训练成绩',
           style: textTheme.displaySmall?.copyWith(
-            color: AppColors.seed,
+            color: Theme.of(context).colorScheme.primary,
             fontWeight: FontWeight.w800,
           ),
         ),
@@ -26,7 +27,7 @@ class StatsHeader extends StatelessWidget {
         Text(
           '按时间范围查看最佳成绩、平均用时和不同模式下的完成表现。',
           style: textTheme.titleMedium?.copyWith(
-            color: AppColors.textSecondary,
+            color: palette.textSecondary,
             height: 1.6,
           ),
         ),
@@ -49,6 +50,8 @@ class StatsRangeFilterSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -56,7 +59,7 @@ class StatsRangeFilterSection extends StatelessWidget {
         const SizedBox(height: AppSpacing.md),
         Container(
           decoration: BoxDecoration(
-            color: AppColors.surfaceMuted,
+            color: palette.surfaceMuted,
             borderRadius: BorderRadius.circular(AppRadius.md),
           ),
           padding: const EdgeInsets.all(4),
@@ -222,6 +225,7 @@ class _SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
     final textTheme = Theme.of(context).textTheme;
 
     return Row(
@@ -230,7 +234,7 @@ class _SectionHeader extends StatelessWidget {
           child: Text(
             title,
             style: textTheme.titleSmall?.copyWith(
-              color: AppColors.textPrimary,
+              color: palette.textPrimary,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.2,
             ),
@@ -240,7 +244,7 @@ class _SectionHeader extends StatelessWidget {
           Text(
             trailing!,
             style: textTheme.labelLarge?.copyWith(
-              color: AppColors.seed,
+              color: Theme.of(context).colorScheme.primary,
               fontWeight: FontWeight.w700,
             ),
           ),

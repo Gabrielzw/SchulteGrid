@@ -12,16 +12,17 @@ class StatsMetricCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
     final textTheme = Theme.of(context).textTheme;
 
     return Container(
       width: 136,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: _cardDecoration,
+      decoration: _cardDecoration(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Icon(metric.icon, color: AppColors.seed),
+          Icon(metric.icon, color: Theme.of(context).colorScheme.primary),
           const SizedBox(height: AppSpacing.sm),
           Text(
             metric.value,
@@ -38,7 +39,7 @@ class StatsMetricCard extends StatelessWidget {
           Text(
             metric.caption,
             style: textTheme.bodySmall?.copyWith(
-              color: AppColors.textSecondary,
+              color: palette.textSecondary,
               height: 1.4,
             ),
           ),
@@ -62,22 +63,24 @@ class StatsFilterCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
     final textTheme = Theme.of(context).textTheme;
+    final selectedColor = Theme.of(context).colorScheme.primary;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 180),
       decoration: BoxDecoration(
-        color: isSelected ? Colors.white : Colors.transparent,
+        color: isSelected ? palette.cardBackground : Colors.transparent,
         borderRadius: BorderRadius.circular(AppRadius.md - 4),
         border: Border.all(
           color: isSelected
-              ? AppColors.seed.withValues(alpha: 0.22)
+              ? selectedColor.withValues(alpha: 0.22)
               : Colors.transparent,
         ),
         boxShadow: isSelected
             ? <BoxShadow>[
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
+                  color: palette.shadowColor,
                   blurRadius: 12,
                   offset: const Offset(0, 6),
                 ),
@@ -98,7 +101,7 @@ class StatsFilterCard extends StatelessWidget {
               label,
               textAlign: TextAlign.center,
               style: textTheme.titleMedium?.copyWith(
-                color: isSelected ? AppColors.seed : AppColors.textPrimary,
+                color: isSelected ? selectedColor : palette.textPrimary,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -117,12 +120,13 @@ class StatsStateCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
     final textTheme = Theme.of(context).textTheme;
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.lg),
-      decoration: _cardDecoration,
+      decoration: _cardDecoration(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -134,7 +138,7 @@ class StatsStateCard extends StatelessWidget {
           Text(
             message,
             style: textTheme.bodyMedium?.copyWith(
-              color: AppColors.textSecondary,
+              color: palette.textSecondary,
               height: 1.5,
             ),
           ),
@@ -156,15 +160,16 @@ class StatsErrorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
     final textTheme = Theme.of(context).textTheme;
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        color: AppColors.errorSoft,
+        color: palette.errorSoft,
         borderRadius: BorderRadius.circular(AppRadius.md),
-        border: Border.all(color: AppColors.errorBorder),
+        border: Border.all(color: palette.errorBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -173,14 +178,14 @@ class StatsErrorCard extends StatelessWidget {
             '成绩汇总读取失败',
             style: textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w700,
-              color: const Color(0xFF8C2B2B),
+              color: palette.errorForeground,
             ),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
             message,
             style: textTheme.bodyMedium?.copyWith(
-              color: const Color(0xFF8C2B2B),
+              color: palette.errorForeground,
               height: 1.5,
             ),
           ),
@@ -195,14 +200,18 @@ class StatsErrorCard extends StatelessWidget {
   }
 }
 
-final BoxDecoration _cardDecoration = BoxDecoration(
-  color: Colors.white,
-  borderRadius: BorderRadius.circular(AppRadius.md),
-  boxShadow: <BoxShadow>[
-    BoxShadow(
-      color: Colors.black.withValues(alpha: 0.04),
-      blurRadius: 16,
-      offset: const Offset(0, 8),
-    ),
-  ],
-);
+BoxDecoration _cardDecoration(BuildContext context) {
+  final palette = context.appColors;
+
+  return BoxDecoration(
+    color: palette.cardBackground,
+    borderRadius: BorderRadius.circular(AppRadius.md),
+    boxShadow: <BoxShadow>[
+      BoxShadow(
+        color: palette.shadowColor,
+        blurRadius: 16,
+        offset: const Offset(0, 8),
+      ),
+    ],
+  );
+}

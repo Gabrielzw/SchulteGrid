@@ -1,18 +1,11 @@
 import 'dart:math';
 
-import 'package:flutter/material.dart';
-
-import '../../../app/theme/app_theme.dart';
 import '../../../domain/enums/training_mode.dart';
 import '../../../domain/enums/training_order.dart';
 import '../../../domain/models/training_config.dart';
 import '../../../domain/models/training_preview_cell.dart';
 
 const int _alphabetOffset = 65;
-const Color _errorBackground = Color(0xFFFCE8E9);
-const Color _errorForeground = Color(0xFFB3261E);
-const Color _highlightBackground = Color(0xFFDCE6FF);
-const Color _highlightBorder = Color(0xFF8EABF0);
 
 class TrainingBoardSnapshot {
   const TrainingBoardSnapshot({
@@ -115,62 +108,7 @@ TrainingPreviewCell _buildCell({
     isError: isError,
     isCurrentTarget: isCurrentTarget,
     isRecentCorrect: isRecentCorrect,
-    backgroundColor: _resolveBackgroundColor(
-      isError: isError,
-      isRecentCorrect: isRecentCorrect,
-    ),
-    foregroundColor: _resolveForegroundColor(
-      isError: isError,
-      isCurrentTarget: isCurrentTarget,
-      isRecentCorrect: isRecentCorrect,
-    ),
-    borderColor: _resolveBorderColor(
-      isError: isError,
-      isCurrentTarget: isCurrentTarget,
-      isRecentCorrect: isRecentCorrect,
-    ),
   );
-}
-
-Color _resolveBackgroundColor({
-  required bool isError,
-  required bool isRecentCorrect,
-}) {
-  if (isError) {
-    return _errorBackground;
-  }
-  if (isRecentCorrect) {
-    return _highlightBackground;
-  }
-  return Colors.white;
-}
-
-Color _resolveForegroundColor({
-  required bool isError,
-  required bool isCurrentTarget,
-  required bool isRecentCorrect,
-}) {
-  if (isError) {
-    return _errorForeground;
-  }
-  if (isCurrentTarget || isRecentCorrect) {
-    return AppColors.seed;
-  }
-  return AppColors.textPrimary;
-}
-
-Color _resolveBorderColor({
-  required bool isError,
-  required bool isCurrentTarget,
-  required bool isRecentCorrect,
-}) {
-  if (isError) {
-    return _errorForeground;
-  }
-  if (isCurrentTarget || isRecentCorrect) {
-    return _highlightBorder;
-  }
-  return Colors.transparent;
 }
 
 List<String> _buildOrderedValues(TrainingConfig config) {

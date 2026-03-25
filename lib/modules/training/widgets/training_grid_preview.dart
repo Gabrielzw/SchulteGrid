@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../app/theme/app_theme.dart';
 import '../../../domain/models/training_preview_cell.dart';
 
 const Duration _cellFeedbackAnimationDuration = Duration(milliseconds: 90);
@@ -69,7 +70,16 @@ class _GridCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
+    final colorScheme = Theme.of(context).colorScheme;
     final radius = _resolveCellRadius(gridSize);
+    final backgroundColor = _resolveCellBackgroundColor(cell, palette);
+    final foregroundColor = _resolveCellForegroundColor(
+      cell,
+      palette,
+      colorScheme.primary,
+    );
+    final borderColor = _resolveCellBorderColor(cell, palette);
 
     return Material(
       color: Colors.transparent,
@@ -81,15 +91,15 @@ class _GridCell extends StatelessWidget {
           duration: _cellFeedbackAnimationDuration,
           curve: _cellFeedbackAnimationCurve,
           decoration: BoxDecoration(
-            color: cell.backgroundColor,
+            color: backgroundColor,
             borderRadius: BorderRadius.circular(radius),
             border: Border.all(
-              color: cell.borderColor,
+              color: borderColor,
               width: cell.isCurrentTarget || cell.isError ? 2 : 1,
             ),
             boxShadow: <BoxShadow>[
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.04),
+                color: palette.shadowColor,
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -99,7 +109,7 @@ class _GridCell extends StatelessWidget {
             child: Text(
               revealLabels ? cell.displayLabel : '',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: cell.foregroundColor,
+                color: foregroundColor,
                 fontWeight: FontWeight.w800,
                 fontSize: _resolveFontSize(gridSize),
               ),
@@ -109,6 +119,46 @@ class _GridCell extends StatelessWidget {
       ),
     );
   }
+}
+
+Color _resolveCellBackgroundColor(
+  TrainingPreviewCell cell,
+  AppThemeColors palette,
+) {
+  if (cell.isError) {
+    return palette.gridCellErrorBackground;
+  }
+  if (cell.isRecentCorrect) {
+    return palette.gridCellHighlightBackground;
+  }
+  return palette.gridCellBackground;
+}
+
+Color _resolveCellForegroundColor(
+  TrainingPreviewCell cell,
+  AppThemeColors palette,
+  Color primaryColor,
+) {
+  if (cell.isError) {
+    return palette.gridCellErrorForeground;
+  }
+  if (cell.isCurrentTarget || cell.isRecentCorrect) {
+    return primaryColor;
+  }
+  return palette.textPrimary;
+}
+
+Color _resolveCellBorderColor(
+  TrainingPreviewCell cell,
+  AppThemeColors palette,
+) {
+  if (cell.isError) {
+    return palette.gridCellErrorForeground;
+  }
+  if (cell.isCurrentTarget || cell.isRecentCorrect) {
+    return palette.gridCellHighlightBorder;
+  }
+  return Colors.transparent;
 }
 
 double _resolveFontSize(int gridSize) {

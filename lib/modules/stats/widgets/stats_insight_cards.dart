@@ -10,12 +10,13 @@ class StatsSessionHighlightCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
     final textTheme = Theme.of(context).textTheme;
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: _cardDecoration,
+      decoration: _cardDecoration(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -30,7 +31,7 @@ class StatsSessionHighlightCard extends StatelessWidget {
               Text(
                 data.completedAtLabel,
                 style: textTheme.labelLarge?.copyWith(
-                  color: AppColors.textSecondary,
+                  color: palette.textSecondary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -45,7 +46,7 @@ class StatsSessionHighlightCard extends StatelessWidget {
           Text(
             data.caption,
             style: textTheme.bodyMedium?.copyWith(
-              color: AppColors.textSecondary,
+              color: palette.textSecondary,
               height: 1.5,
             ),
           ),
@@ -53,7 +54,7 @@ class StatsSessionHighlightCard extends StatelessWidget {
           Text(
             data.durationLabel,
             style: textTheme.headlineMedium?.copyWith(
-              color: AppColors.textPrimary,
+              color: palette.textPrimary,
               fontWeight: FontWeight.w800,
             ),
           ),
@@ -84,12 +85,13 @@ class StatsModeInsightCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
     final textTheme = Theme.of(context).textTheme;
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: _cardDecoration,
+      decoration: _cardDecoration(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -100,7 +102,7 @@ class StatsModeInsightCard extends StatelessWidget {
               Text(
                 data.sessionCountLabel,
                 style: textTheme.labelLarge?.copyWith(
-                  color: AppColors.textSecondary,
+                  color: palette.textSecondary,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -110,7 +112,7 @@ class StatsModeInsightCard extends StatelessWidget {
           Text(
             data.description,
             style: textTheme.bodyMedium?.copyWith(
-              color: AppColors.textSecondary,
+              color: palette.textSecondary,
               height: 1.5,
             ),
           ),
@@ -151,19 +153,21 @@ class _ModeBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
+
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.sm,
         vertical: AppSpacing.xs,
       ),
       decoration: BoxDecoration(
-        color: tone,
+        color: resolveAdaptiveTone(context, tone),
         borderRadius: BorderRadius.circular(AppRadius.md),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Icon(icon, size: 18, color: AppColors.textPrimary),
+          Icon(icon, size: 18, color: palette.textPrimary),
           const SizedBox(width: AppSpacing.xs),
           Text(
             label,
@@ -185,12 +189,13 @@ class _StatColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
     final textTheme = Theme.of(context).textTheme;
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: AppColors.surfaceMuted,
+        color: palette.surfaceMuted,
         borderRadius: BorderRadius.circular(AppRadius.md),
       ),
       child: Column(
@@ -204,7 +209,7 @@ class _StatColumn extends StatelessWidget {
           Text(
             label,
             style: textTheme.labelLarge?.copyWith(
-              color: AppColors.textSecondary,
+              color: palette.textSecondary,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -221,19 +226,21 @@ class _InfoChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
+
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.sm,
         vertical: AppSpacing.xs,
       ),
       decoration: BoxDecoration(
-        color: AppColors.surfaceMuted,
+        color: palette.surfaceMuted,
         borderRadius: BorderRadius.circular(AppRadius.md),
       ),
       child: Text(
         label,
         style: Theme.of(context).textTheme.labelLarge?.copyWith(
-          color: AppColors.textPrimary,
+          color: palette.textPrimary,
           fontWeight: FontWeight.w600,
         ),
       ),
@@ -241,14 +248,18 @@ class _InfoChip extends StatelessWidget {
   }
 }
 
-final BoxDecoration _cardDecoration = BoxDecoration(
-  color: Colors.white,
-  borderRadius: BorderRadius.circular(AppRadius.md),
-  boxShadow: <BoxShadow>[
-    BoxShadow(
-      color: Colors.black.withValues(alpha: 0.04),
-      blurRadius: 16,
-      offset: const Offset(0, 8),
-    ),
-  ],
-);
+BoxDecoration _cardDecoration(BuildContext context) {
+  final palette = context.appColors;
+
+  return BoxDecoration(
+    color: palette.cardBackground,
+    borderRadius: BorderRadius.circular(AppRadius.md),
+    boxShadow: <BoxShadow>[
+      BoxShadow(
+        color: palette.shadowColor,
+        blurRadius: 16,
+        offset: const Offset(0, 8),
+      ),
+    ],
+  );
+}

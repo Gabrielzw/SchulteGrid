@@ -8,6 +8,7 @@ class TrainingSetupHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
     final textTheme = Theme.of(context).textTheme;
 
     return Column(
@@ -16,7 +17,7 @@ class TrainingSetupHeader extends StatelessWidget {
         Text(
           '训练设置',
           style: textTheme.displaySmall?.copyWith(
-            color: AppColors.seed,
+            color: Theme.of(context).colorScheme.primary,
             fontWeight: FontWeight.w800,
           ),
         ),
@@ -24,7 +25,7 @@ class TrainingSetupHeader extends StatelessWidget {
         Text(
           '选择本轮专注训练的网格尺寸、内容模式和点击顺序。',
           style: textTheme.titleMedium?.copyWith(
-            color: AppColors.textSecondary,
+            color: palette.textSecondary,
             height: 1.6,
           ),
         ),
@@ -95,6 +96,8 @@ class TrainingOptionSelector<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -102,7 +105,7 @@ class TrainingOptionSelector<T> extends StatelessWidget {
         const SizedBox(height: AppSpacing.md),
         Container(
           decoration: BoxDecoration(
-            color: AppColors.surfaceMuted,
+            color: palette.surfaceMuted,
             borderRadius: BorderRadius.circular(AppRadius.md),
           ),
           padding: const EdgeInsets.all(4),
@@ -166,20 +169,21 @@ class TrainingValidationBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
     final textTheme = Theme.of(context).textTheme;
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: AppColors.errorSoft,
+        color: palette.errorSoft,
         borderRadius: BorderRadius.circular(AppRadius.md),
-        border: Border.all(color: AppColors.errorBorder),
+        border: Border.all(color: palette.errorBorder),
       ),
       child: Text(
         message,
         style: textTheme.bodyMedium?.copyWith(
-          color: const Color(0xFF8C2B2B),
+          color: palette.errorForeground,
           height: 1.5,
         ),
       ),
@@ -207,6 +211,7 @@ class _SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
     final textTheme = Theme.of(context).textTheme;
 
     return Row(
@@ -215,7 +220,7 @@ class _SectionHeader extends StatelessWidget {
           child: Text(
             title,
             style: textTheme.titleSmall?.copyWith(
-              color: AppColors.textPrimary,
+              color: palette.textPrimary,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.2,
             ),
@@ -225,7 +230,7 @@ class _SectionHeader extends StatelessWidget {
           Text(
             trailing!,
             style: textTheme.labelLarge?.copyWith(
-              color: AppColors.seed,
+              color: Theme.of(context).colorScheme.primary,
               fontWeight: FontWeight.w700,
             ),
           ),

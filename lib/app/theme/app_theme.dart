@@ -1,17 +1,11 @@
 import 'package:flutter/material.dart';
 
+export 'app_theme_colors.dart';
+
+import 'app_theme_colors.dart';
+
 abstract final class AppColors {
   static const Color seed = Color(0xFF2457C5);
-  static const Color canvas = Color(0xFFF4F6FB);
-  static const Color card = Colors.white;
-  static const Color border = Color(0xFFDDE3F0);
-  static const Color shellTop = Color(0xFFF8FAFF);
-  static const Color shellBottom = Color(0xFFEEF2FB);
-  static const Color surfaceMuted = Color(0xFFE9EEF6);
-  static const Color textPrimary = Color(0xFF1E293B);
-  static const Color textSecondary = Color(0xFF7A8599);
-  static const Color errorSoft = Color(0xFFFFEFEF);
-  static const Color errorBorder = Color(0xFFFFCFCF);
 }
 
 abstract final class AppSpacing {
@@ -31,21 +25,43 @@ final class AppTheme {
   const AppTheme._();
 
   static ThemeData light() {
+    return _buildTheme(
+      brightness: Brightness.light,
+      colors: AppThemeColors.light,
+    );
+  }
+
+  static ThemeData dark() {
+    return _buildTheme(
+      brightness: Brightness.dark,
+      colors: AppThemeColors.dark,
+    );
+  }
+
+  static ThemeData _buildTheme({
+    required Brightness brightness,
+    required AppThemeColors colors,
+  }) {
     final colorScheme = ColorScheme.fromSeed(
       seedColor: AppColors.seed,
-      brightness: Brightness.light,
+      brightness: brightness,
     );
+    final baseTheme = brightness == Brightness.light
+        ? ThemeData.light()
+        : ThemeData.dark();
 
     return ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme.copyWith(
-        surface: AppColors.card,
-        outlineVariant: AppColors.border,
+        surface: colors.cardBackground,
+        outlineVariant: colors.border,
+        onSurface: colors.textPrimary,
+        onSurfaceVariant: colors.textSecondary,
       ),
-      scaffoldBackgroundColor: AppColors.canvas,
-      textTheme: ThemeData.light().textTheme.apply(
-        bodyColor: AppColors.textPrimary,
-        displayColor: AppColors.textPrimary,
+      scaffoldBackgroundColor: colors.canvas,
+      textTheme: baseTheme.textTheme.apply(
+        bodyColor: colors.textPrimary,
+        displayColor: colors.textPrimary,
       ),
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.transparent,
@@ -53,7 +69,9 @@ final class AppTheme {
         surfaceTintColor: Colors.transparent,
       ),
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: Colors.white.withValues(alpha: 0.94),
+        backgroundColor: colors.cardBackground.withValues(
+          alpha: brightness == Brightness.light ? 0.94 : 0.92,
+        ),
         indicatorColor: colorScheme.primaryContainer,
         labelTextStyle: WidgetStateProperty.all(
           const TextStyle(fontWeight: FontWeight.w600),
@@ -69,13 +87,27 @@ final class AppTheme {
           ),
         ),
       ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: colorScheme.primary,
+          side: BorderSide(color: colors.border),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadius.md),
+          ),
+        ),
+      ),
       chipTheme: ChipThemeData(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.md),
-          side: const BorderSide(color: AppColors.border),
+          side: BorderSide(color: colors.border),
         ),
-        side: const BorderSide(color: AppColors.border),
+        side: BorderSide(color: colors.border),
       ),
+      dividerColor: colors.border,
+      snackBarTheme: const SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+      ),
+      extensions: <ThemeExtension<dynamic>>[colors],
     );
   }
 }

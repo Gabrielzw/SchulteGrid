@@ -23,22 +23,22 @@ class RootView extends GetView<RootController> {
         NavigationDestination(icon: Icon(Icons.history_rounded), label: '历史'),
       ];
 
-  static const BoxDecoration _backgroundDecoration = BoxDecoration(
-    gradient: LinearGradient(
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
-      colors: <Color>[AppColors.shellTop, AppColors.shellBottom],
-    ),
-  );
-
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
+
     return Obx(() {
       final currentIndex = controller.currentIndex.value;
 
       return Scaffold(
         body: DecoratedBox(
-          decoration: _backgroundDecoration,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: <Color>[palette.shellTop, palette.shellBottom],
+            ),
+          ),
           child: SafeArea(
             child: IndexedStack(index: currentIndex, children: _pages),
           ),

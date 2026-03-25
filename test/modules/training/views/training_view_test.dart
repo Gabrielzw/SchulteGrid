@@ -11,6 +11,7 @@ import 'package:schulte_grid/modules/training/views/training_view.dart';
 import 'package:schulte_grid/modules/training/widgets/training_session_components.dart';
 
 import '../../../support/fakes/fake_training_record_repository.dart';
+import '../../../support/test_app.dart';
 
 void main() {
   testWidgets('训练页首次点击格子后才显示数字并开始训练', (WidgetTester tester) async {
@@ -36,7 +37,7 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
     Get.put<TrainingController>(controller);
 
-    await tester.pumpWidget(const GetMaterialApp(home: TrainingView()));
+    await tester.pumpWidget(buildTestApp(const TrainingView()));
     await tester.pump();
 
     final targetLabel = controller.displayNextTargetLabel;

@@ -11,18 +11,20 @@ class TrainingSessionBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: palette.cardBackground,
         borderRadius: BorderRadius.circular(AppRadius.md),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: palette.border),
       ),
       child: Text(
         message,
         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-          color: AppColors.textPrimary,
+          color: palette.textPrimary,
           fontWeight: FontWeight.w600,
         ),
         textAlign: TextAlign.center,
@@ -51,6 +53,8 @@ class TrainingBoardPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
+
     return Stack(
       alignment: Alignment.center,
       children: <Widget>[
@@ -58,12 +62,12 @@ class TrainingBoardPanel extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: AppColors.surfaceMuted,
+              color: palette.surfaceMuted,
               borderRadius: BorderRadius.circular(AppRadius.lg),
-              border: Border.all(color: AppColors.border),
+              border: Border.all(color: palette.border),
               boxShadow: <BoxShadow>[
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
+                  color: palette.shadowColor,
                   blurRadius: 24,
                   offset: const Offset(0, 14),
                 ),
@@ -91,10 +95,12 @@ class TrainingSessionHint extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
+
     return Text(
       message,
       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-        color: AppColors.textSecondary,
+        color: palette.textSecondary,
         height: 1.5,
       ),
       textAlign: TextAlign.center,
@@ -109,9 +115,11 @@ class _BoardOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
+
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.9),
+        color: palette.cardBackground.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(999),
       ),
       child: Padding(
@@ -122,7 +130,7 @@ class _BoardOverlay extends StatelessWidget {
         child: Text(
           label,
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            color: AppColors.textPrimary,
+            color: palette.textPrimary,
             fontWeight: FontWeight.w700,
           ),
         ),

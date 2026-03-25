@@ -12,15 +12,17 @@ class HistoryRecordCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: palette.cardBackground,
         borderRadius: BorderRadius.circular(AppRadius.md),
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: palette.shadowColor,
             blurRadius: 16,
             offset: const Offset(0, 8),
           ),
@@ -45,8 +47,9 @@ class _HistoryRecordHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
     final labelStyle = Theme.of(context).textTheme.labelLarge?.copyWith(
-      color: AppColors.textSecondary,
+      color: palette.textSecondary,
       fontWeight: FontWeight.w600,
     );
 
@@ -71,6 +74,7 @@ class _HistoryRecordContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
     final textTheme = Theme.of(context).textTheme;
 
     return Column(
@@ -79,7 +83,7 @@ class _HistoryRecordContent extends StatelessWidget {
         Text(
           record.durationLabel,
           style: textTheme.headlineMedium?.copyWith(
-            color: AppColors.textPrimary,
+            color: palette.textPrimary,
             fontWeight: FontWeight.w800,
           ),
         ),
@@ -87,7 +91,7 @@ class _HistoryRecordContent extends StatelessWidget {
         Text(
           '${record.orderLabel} · ${record.gridLabel}',
           style: textTheme.titleMedium?.copyWith(
-            color: AppColors.textPrimary,
+            color: palette.textPrimary,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -117,14 +121,16 @@ class HistoryStateCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
     final textTheme = Theme.of(context).textTheme;
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: palette.cardBackground,
         borderRadius: BorderRadius.circular(AppRadius.md),
+        border: Border.all(color: palette.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -137,7 +143,7 @@ class HistoryStateCard extends StatelessWidget {
           Text(
             message,
             style: textTheme.bodyMedium?.copyWith(
-              color: AppColors.textSecondary,
+              color: palette.textSecondary,
               height: 1.5,
             ),
           ),
@@ -159,13 +165,15 @@ class HistoryErrorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        color: AppColors.errorSoft,
+        color: palette.errorSoft,
         borderRadius: BorderRadius.circular(AppRadius.md),
-        border: Border.all(color: AppColors.errorBorder),
+        border: Border.all(color: palette.errorBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -174,14 +182,14 @@ class HistoryErrorCard extends StatelessWidget {
             '历史记录读取失败',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w700,
-              color: const Color(0xFF8C2B2B),
+              color: palette.errorForeground,
             ),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
             message,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: const Color(0xFF8C2B2B),
+              color: palette.errorForeground,
               height: 1.5,
             ),
           ),
@@ -209,19 +217,21 @@ class _ModeBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
+
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.sm,
         vertical: AppSpacing.xs,
       ),
       decoration: BoxDecoration(
-        color: tone,
+        color: resolveAdaptiveTone(context, tone),
         borderRadius: BorderRadius.circular(AppRadius.md),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Icon(icon, size: 18, color: AppColors.textPrimary),
+          Icon(icon, size: 18, color: palette.textPrimary),
           const SizedBox(width: AppSpacing.xs),
           Text(
             label,
@@ -242,19 +252,21 @@ class _InfoChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.appColors;
+
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.sm,
         vertical: AppSpacing.xs,
       ),
       decoration: BoxDecoration(
-        color: AppColors.surfaceMuted,
+        color: palette.surfaceMuted,
         borderRadius: BorderRadius.circular(AppRadius.md),
       ),
       child: Text(
         label,
         style: Theme.of(context).textTheme.labelLarge?.copyWith(
-          color: AppColors.textPrimary,
+          color: palette.textPrimary,
           fontWeight: FontWeight.w600,
         ),
       ),
