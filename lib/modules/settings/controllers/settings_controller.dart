@@ -67,35 +67,46 @@ class SettingsController extends GetxController {
       return;
     }
 
-    final PickedBackupFile? file = await _backupFileAccess.pickBackupFile();
-    if (file == null) {
-      return;
-    }
-
-    final bool shouldRestore = await _confirmRestore(file.name);
-    if (!shouldRestore) {
-      return;
-    }
-
-    final AppToastHandle syncToast = AppToast.showSync(
-      title: '正在同步数据',
-      message: '正在恢复训练记录和应用配置，请稍候。',
-    );
     isRestoring.value = true;
     statusMessage.value = null;
+
     try {
-      final BackupRestoreSummary summary = await _backupService.restoreFromJson(
-        file.contents,
+      PickedBackupFile? file;
+      try {
+        file = await _backupFileAccess.pickBackupFile();
+      } catch (error) {
+        _showError(title: '读取备份文件失败', error: error);
+        return;
+      }
+
+      if (file == null) {
+        return;
+      }
+
+      final bool shouldRestore = await _confirmRestore(file.name);
+      if (!shouldRestore) {
+        return;
+      }
+
+      final AppToastHandle syncToast = AppToast.showSync(
+        title: '正在同步数据',
+        message: '正在恢复训练记录和应用配置，请稍候。',
       );
-      await _refreshRecordViews();
-      await syncToast.closeAndWait();
-      _showSuccess(
-        title: '恢复成功',
-        message: '已从 ${file.name} 恢复 ${summary.trainingRecordCount} 条训练记录。',
-      );
-    } catch (error) {
-      await syncToast.closeAndWait();
-      _showError(title: '恢复备份失败', error: error);
+      try {
+        final BackupRestoreSummary summary = await _backupService.restoreFromJson(
+          file.contents,
+        );
+        await _refreshRecordViews();
+        await syncToast.closeAndWait();
+        _showSuccess(
+          title: '恢复成功',
+          message:
+              '已从 ${file.name} 恢复 ${summary.trainingRecordCount} 条训练记录。',
+        );
+      } catch (error) {
+        await syncToast.closeAndWait();
+        _showError(title: '恢复备份失败', error: error);
+      }
     } finally {
       isRestoring.value = false;
     }

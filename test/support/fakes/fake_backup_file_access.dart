@@ -1,15 +1,25 @@
 import 'package:schulte_grid/data/services/backup_file_access.dart';
 
 class FakeBackupFileAccess implements BackupFileAccess {
-  FakeBackupFileAccess({this.savedPathResult, this.pickedFileResult});
+  FakeBackupFileAccess({
+    this.savedPathResult,
+    this.pickedFileResult,
+    this.pickBackupFileError,
+  });
 
   String? savedPathResult;
   PickedBackupFile? pickedFileResult;
+  Object? pickBackupFileError;
   String? lastSavedFileName;
   String? lastSavedContents;
 
   @override
   Future<PickedBackupFile?> pickBackupFile() async {
+    final error = pickBackupFileError;
+    if (error != null) {
+      throw error;
+    }
+
     return pickedFileResult;
   }
 
