@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../app/theme/app_theme.dart';
 import '../models/history_record_view_data.dart';
 
+const double _historySummaryCardHeight = 136;
+
 class HistoryMetricCard extends StatelessWidget {
   const HistoryMetricCard({required this.metric, super.key});
 
@@ -14,7 +16,8 @@ class HistoryMetricCard extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return Container(
-      width: 136,
+      width: double.infinity,
+      height: _historySummaryCardHeight,
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: palette.cardBackground,
@@ -32,23 +35,40 @@ class HistoryMetricCard extends StatelessWidget {
         children: <Widget>[
           Icon(metric.icon, color: Theme.of(context).colorScheme.primary),
           const SizedBox(height: AppSpacing.sm),
-          Text(
-            metric.value,
-            style: textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.w700,
+          SizedBox(
+            height: 30,
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  metric.value,
+                  maxLines: 1,
+                  style: textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
             ),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
             metric.label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: AppSpacing.xs),
-          Text(
-            metric.caption,
-            style: textTheme.bodySmall?.copyWith(
-              color: palette.textSecondary,
-              height: 1.4,
+          Expanded(
+            child: Text(
+              metric.caption,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: textTheme.bodySmall?.copyWith(
+                color: palette.textSecondary,
+                height: 1.4,
+              ),
             ),
           ),
         ],

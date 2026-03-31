@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../app/theme/app_theme.dart';
+import '../../../app/widgets/app_adaptive_grid.dart';
 import '../models/history_record_view_data.dart';
 import 'history_cards.dart';
 import 'history_record_cards.dart';
@@ -46,17 +47,15 @@ class HistorySummarySection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        const _SectionHeader(title: '记录概览', trailing: '实时读取本地数据'),
+        const _SectionHeader(title: '记录概览'),
         const SizedBox(height: AppSpacing.md),
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          children: metrics
-              .map(
-                (HistorySummaryMetricData metric) =>
-                    HistoryMetricCard(metric: metric),
-              )
-              .toList(growable: false),
+        AppAdaptiveGrid(
+          itemCount: metrics.length,
+          minChildWidth: 116,
+          maxColumns: 3,
+          itemBuilder: (BuildContext context, int index) {
+            return HistoryMetricCard(metric: metrics[index]);
+          },
         ),
       ],
     );

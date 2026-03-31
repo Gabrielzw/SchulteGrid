@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../../app/theme/app_theme.dart';
+import '../../../app/widgets/app_adaptive_grid.dart';
 import '../../../domain/enums/record_time_range.dart';
 import '../models/stats_view_data.dart';
-import 'stats_adaptive_grid.dart';
 import 'stats_core_cards.dart';
 import 'stats_mode_analysis_card.dart';
 
@@ -196,7 +196,7 @@ class StatsSummarySection extends StatelessWidget {
       children: <Widget>[
         _SectionHeader(title: '核心指标', trailing: trailing),
         const SizedBox(height: AppSpacing.md),
-        StatsAdaptiveGrid(
+        AppAdaptiveGrid(
           itemCount: metrics.length,
           minChildWidth: 116,
           maxColumns: 3,

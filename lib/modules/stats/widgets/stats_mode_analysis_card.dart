@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../app/theme/app_theme.dart';
+import '../../../app/widgets/app_adaptive_grid.dart';
 import '../models/stats_view_data.dart';
-import 'stats_adaptive_grid.dart';
 import 'stats_mode_analysis_parts.dart';
 
 class StatsModeAnalysisCard extends StatelessWidget {
@@ -50,7 +50,7 @@ class StatsModeAnalysisCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.lg),
           const _StatsModeSubsectionLabel(title: '基础统计'),
           const SizedBox(height: AppSpacing.sm),
-          StatsAdaptiveGrid(
+          AppAdaptiveGrid(
             itemCount: data.basicMetrics.length,
             minChildWidth: 148,
             maxColumns: 2,
@@ -143,7 +143,7 @@ class _StabilityContent extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.md),
-        StatsAdaptiveGrid(
+        AppAdaptiveGrid(
           itemCount: data.metrics.length,
           minChildWidth: 108,
           maxColumns: 3,

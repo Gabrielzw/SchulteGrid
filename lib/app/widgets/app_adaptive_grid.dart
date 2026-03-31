@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../../app/theme/app_theme.dart';
+import '../theme/app_theme.dart';
 
-class StatsAdaptiveGrid extends StatelessWidget {
-  const StatsAdaptiveGrid({
+class AppAdaptiveGrid extends StatelessWidget {
+  const AppAdaptiveGrid({
     required this.itemCount,
     required this.itemBuilder,
     required this.minChildWidth,
