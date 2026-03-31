@@ -2,7 +2,12 @@
 
 一个基于 Flutter 构建的中文舒尔特方格训练应用，聚焦注意力训练、视觉搜索与信息扫描速度提升。项目提供多种训练模式、实时成绩反馈、历史记录筛选、统计分析，以及本地 JSON 备份与恢复能力。
 
-<img src="setup.jpg" alt="应用界面预览" width="200">
+<div align="center">
+  <img src="setup.jpg" alt="首页" width="23%">
+  <img src="score.jpg" alt="成绩分析" width="23%">
+  <img src="history.jpg" alt="历史" width="23%">
+  <img src="setting.jpg" alt="设置" width="23%">
+</div>
 
 ## 功能概览
 
