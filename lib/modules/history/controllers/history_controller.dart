@@ -83,10 +83,6 @@ class HistoryController extends GetxController {
     ];
   }
 
-  List<HistoryRecordViewData> get visibleRecords {
-    return filteredRecords.map(_buildRecordViewData).toList(growable: false);
-  }
-
   int get recordCount => filteredRecords.length;
 
   String get bestDurationLabel {
@@ -194,7 +190,7 @@ class HistoryController extends GetxController {
     return formatGridSizeLabel(gridSize);
   }
 
-  HistoryRecordViewData _buildRecordViewData(TrainingRecord record) {
+  HistoryRecordViewData buildRecordViewData(TrainingRecord record) {
     final mode = TrainingMode.fromStorageValue(record.mode);
     final order = TrainingOrder.fromStorageValue(record.order);
 

@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../../../app/theme/app_theme.dart';
 import '../../../app/widgets/app_adaptive_grid.dart';
+import '../../../data/models/training_record.dart';
 import '../models/history_record_view_data.dart';
 import 'history_cards.dart';
 import 'history_record_cards.dart';
+
+const double _historyContentMaxWidth = 460;
 
 class HistoryHeader extends StatelessWidget {
   const HistoryHeader({super.key});
@@ -155,25 +158,15 @@ class HistoryWrapFilterSection<T> extends StatelessWidget {
   }
 }
 
-class HistoryRecordsSection extends StatelessWidget {
-  const HistoryRecordsSection({
+class HistoryRecordsHeader extends StatelessWidget {
+  const HistoryRecordsHeader({
     required this.title,
     required this.subtitle,
-    required this.records,
-    required this.isLoading,
-    required this.errorMessage,
-    required this.emptyMessage,
-    required this.onRetry,
     super.key,
   });
 
   final String title;
   final String subtitle;
-  final List<HistoryRecordViewData> records;
-  final bool isLoading;
-  final String? errorMessage;
-  final String emptyMessage;
-  final Future<void> Function() onRetry;
 
   @override
   Widget build(BuildContext context) {
@@ -189,29 +182,75 @@ class HistoryRecordsSection extends StatelessWidget {
             height: 1.5,
           ),
         ),
-        const SizedBox(height: AppSpacing.md),
-        if (isLoading)
-          const HistoryStateCard(
-            title: '正在读取历史记录',
-            message: '本地数据加载完成后会立即展示在这里。',
-          )
-        else if (errorMessage != null)
-          HistoryErrorCard(message: errorMessage!, onRetry: onRetry)
-        else if (records.isEmpty)
-          HistoryStateCard(title: '暂无历史成绩', message: emptyMessage)
-        else
-          Column(
-            children: records
-                .map(
-                  (HistoryRecordViewData record) => Padding(
-                    padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                    child: HistoryRecordCard(record: record),
-                  ),
-                )
-                .toList(growable: false),
-          ),
       ],
     );
+  }
+}
+
+class HistoryRecordListSliver extends StatelessWidget {
+  const HistoryRecordListSliver({
+    required this.records,
+    required this.recordBuilder,
+    super.key,
+  });
+
+  final List<TrainingRecord> records;
+  final HistoryRecordViewData Function(TrainingRecord record) recordBuilder;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+      sliver: SliverList(
+        delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
+          return Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxWidth: _historyContentMaxWidth,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                child: HistoryRecordCard(record: recordBuilder(records[index])),
+              ),
+            ),
+          );
+        }, childCount: records.length),
+      ),
+    );
+  }
+}
+
+class HistoryConstrainedSliver extends StatelessWidget {
+  const HistoryConstrainedSliver({required this.child, super.key});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+      sliver: SliverToBoxAdapter(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: _historyContentMaxWidth,
+            ),
+            child: child,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class HistoryGapSliver extends StatelessWidget {
+  const HistoryGapSliver({required this.height, super.key});
+
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(child: SizedBox(height: height));
   }
 }
 
