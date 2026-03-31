@@ -42,7 +42,6 @@ lib/
    ├─ settings/        # 主题与数据备份
    └─ root/            # 底部导航容器
 
-test/                  # 控制器、视图、服务和组件测试
 DESIGN.md              # 设计系统说明
 ```
 
@@ -100,7 +99,6 @@ flutter run -d <device_id>
 
 - 本项目由当前仓库所有者维护。
 - 欢迎通过 Issue 或 Pull Request 提交改进。
-- 提交代码前请确保 `flutter test` 通过，并在模型变更时同步提交生成文件。
 
 ## 开源许可
 
