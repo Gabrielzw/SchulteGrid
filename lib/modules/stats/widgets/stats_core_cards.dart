@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import '../../../app/theme/app_theme.dart';
 import '../models/stats_view_data.dart';
 
+const double _statsSummaryCardHeight = 128;
+
 class StatsMetricCard extends StatelessWidget {
   const StatsMetricCard({required this.metric, super.key});
 
@@ -16,7 +18,8 @@ class StatsMetricCard extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return Container(
-      width: 136,
+      width: double.infinity,
+      height: _statsSummaryCardHeight,
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: _cardDecoration(context),
       child: Column(
@@ -24,23 +27,39 @@ class StatsMetricCard extends StatelessWidget {
         children: <Widget>[
           Icon(metric.icon, color: Theme.of(context).colorScheme.primary),
           const SizedBox(height: AppSpacing.sm),
-          Text(
-            metric.value,
-            style: textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.w700,
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  metric.value,
+                  maxLines: 1,
+                  style: textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
             ),
           ),
           const SizedBox(height: AppSpacing.xs),
-          Text(
-            metric.label,
-            style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            metric.caption,
-            style: textTheme.bodySmall?.copyWith(
-              color: palette.textSecondary,
-              height: 1.4,
+          SizedBox(
+            height: 20,
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  metric.label,
+                  maxLines: 1,
+                  style: textTheme.titleSmall?.copyWith(
+                    color: palette.textSecondary,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
             ),
           ),
         ],
@@ -101,6 +120,58 @@ class StatsFilterCard extends StatelessWidget {
               label,
               textAlign: TextAlign.center,
               style: textTheme.titleMedium?.copyWith(
+                color: isSelected ? selectedColor : palette.textPrimary,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class StatsFilterChipCard extends StatelessWidget {
+  const StatsFilterChipCard({
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+    super.key,
+  });
+
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = context.appColors;
+    final selectedColor = Theme.of(context).colorScheme.primary;
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 180),
+      decoration: BoxDecoration(
+        color: isSelected ? selectedColor.withValues(alpha: 0.12) : null,
+        borderRadius: BorderRadius.circular(AppRadius.md),
+        border: Border.all(
+          color: isSelected
+              ? selectedColor.withValues(alpha: 0.28)
+              : palette.border,
+        ),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.sm,
+            ),
+            child: Text(
+              label,
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
                 color: isSelected ? selectedColor : palette.textPrimary,
                 fontWeight: FontWeight.w700,
               ),

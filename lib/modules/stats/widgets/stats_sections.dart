@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../../../app/theme/app_theme.dart';
 import '../../../domain/enums/record_time_range.dart';
 import '../models/stats_view_data.dart';
-import 'stats_cards.dart';
+import 'stats_adaptive_grid.dart';
+import 'stats_core_cards.dart';
+import 'stats_mode_analysis_card.dart';
 
 class StatsHeader extends StatelessWidget {
   const StatsHeader({super.key});
@@ -25,7 +27,7 @@ class StatsHeader extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.md),
         Text(
-          '按时间范围查看最佳成绩、平均用时和不同模式下的完成表现。',
+          '按时间范围、模式、尺寸和顺序筛选后，查看不同训练模式的基础统计、趋势和稳定性。',
           style: textTheme.titleMedium?.copyWith(
             color: palette.textSecondary,
             height: 1.6,
@@ -82,6 +84,101 @@ class StatsRangeFilterSection extends StatelessWidget {
   }
 }
 
+class StatsSegmentedFilterSection<T> extends StatelessWidget {
+  const StatsSegmentedFilterSection({
+    required this.title,
+    required this.options,
+    required this.selectedOption,
+    required this.labelBuilder,
+    required this.onSelected,
+    this.trailing,
+    super.key,
+  });
+
+  final String title;
+  final List<T> options;
+  final T selectedOption;
+  final String Function(T option) labelBuilder;
+  final ValueChanged<T> onSelected;
+  final String? trailing;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = context.appColors;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        _SectionHeader(title: title, trailing: trailing),
+        const SizedBox(height: AppSpacing.md),
+        Container(
+          decoration: BoxDecoration(
+            color: palette.surfaceMuted,
+            borderRadius: BorderRadius.circular(AppRadius.md),
+          ),
+          padding: const EdgeInsets.all(4),
+          child: Row(
+            children: options
+                .map(
+                  (T option) => Expanded(
+                    child: StatsFilterCard(
+                      label: labelBuilder(option),
+                      isSelected: option == selectedOption,
+                      onTap: () => onSelected(option),
+                    ),
+                  ),
+                )
+                .toList(growable: false),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class StatsWrapFilterSection<T> extends StatelessWidget {
+  const StatsWrapFilterSection({
+    required this.title,
+    required this.options,
+    required this.selectedOption,
+    required this.labelBuilder,
+    required this.onSelected,
+    this.trailing,
+    super.key,
+  });
+
+  final String title;
+  final List<T> options;
+  final T selectedOption;
+  final String Function(T option) labelBuilder;
+  final ValueChanged<T> onSelected;
+  final String? trailing;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        _SectionHeader(title: title, trailing: trailing),
+        const SizedBox(height: AppSpacing.md),
+        Wrap(
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
+          children: options
+              .map(
+                (T option) => StatsFilterChipCard(
+                  label: labelBuilder(option),
+                  isSelected: option == selectedOption,
+                  onTap: () => onSelected(option),
+                ),
+              )
+              .toList(growable: false),
+        ),
+      ],
+    );
+  }
+}
+
 class StatsSummarySection extends StatelessWidget {
   const StatsSummarySection({
     required this.metrics,
@@ -99,54 +196,27 @@ class StatsSummarySection extends StatelessWidget {
       children: <Widget>[
         _SectionHeader(title: '核心指标', trailing: trailing),
         const SizedBox(height: AppSpacing.md),
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          children: metrics
-              .map(
-                (StatsSummaryMetricData metric) =>
-                    StatsMetricCard(metric: metric),
-              )
-              .toList(growable: false),
+        StatsAdaptiveGrid(
+          itemCount: metrics.length,
+          minChildWidth: 116,
+          maxColumns: 3,
+          itemBuilder: (BuildContext context, int index) {
+            return StatsMetricCard(metric: metrics[index]);
+          },
         ),
       ],
     );
   }
 }
 
-class StatsHighlightsSection extends StatelessWidget {
-  const StatsHighlightsSection({
-    required this.bestRecord,
-    required this.latestRecord,
-    super.key,
-  });
-
-  final StatsSessionHighlightData bestRecord;
-  final StatsSessionHighlightData latestRecord;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        const _SectionHeader(title: '成绩亮点', trailing: '当前范围内'),
-        const SizedBox(height: AppSpacing.md),
-        StatsSessionHighlightCard(data: bestRecord),
-        const SizedBox(height: AppSpacing.sm),
-        StatsSessionHighlightCard(data: latestRecord),
-      ],
-    );
-  }
-}
-
-class StatsModeInsightsSection extends StatelessWidget {
-  const StatsModeInsightsSection({
-    required this.insights,
+class StatsModeAnalysisSection extends StatelessWidget {
+  const StatsModeAnalysisSection({
+    required this.analyses,
     required this.trailing,
     super.key,
   });
 
-  final List<StatsModeInsightData> insights;
+  final List<StatsModeAnalysisData> analyses;
   final String trailing;
 
   @override
@@ -154,14 +224,14 @@ class StatsModeInsightsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        _SectionHeader(title: '模式表现', trailing: trailing),
+        _SectionHeader(title: '模式分析', trailing: trailing),
         const SizedBox(height: AppSpacing.md),
         Column(
-          children: insights
+          children: analyses
               .map(
-                (StatsModeInsightData insight) => Padding(
+                (StatsModeAnalysisData analysis) => Padding(
                   padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                  child: StatsModeInsightCard(data: insight),
+                  child: StatsModeAnalysisCard(data: analysis),
                 ),
               )
               .toList(growable: false),

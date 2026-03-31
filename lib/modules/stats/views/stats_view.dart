@@ -32,10 +32,44 @@ class StatsView extends GetView<StatsController> {
                   onSelected: controller.selectTimeRange,
                 ),
                 const SizedBox(height: 28),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Expanded(
+                      child: StatsSegmentedFilterSection(
+                        title: '内容模式',
+                        options: controller.modeFilters,
+                        selectedOption: controller.selectedModeFilter.value,
+                        labelBuilder: (filter) => filter.label,
+                        onSelected: controller.selectModeFilter,
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.md),
+                    Expanded(
+                      child: StatsSegmentedFilterSection(
+                        title: '顺序模式',
+                        options: controller.orderFilters,
+                        selectedOption: controller.selectedOrderFilter.value,
+                        labelBuilder: (filter) => filter.label,
+                        onSelected: controller.selectOrderFilter,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 28),
+                StatsWrapFilterSection<int?>(
+                  title: '网格尺寸',
+                  trailing: '3 × 3 到 7 × 7',
+                  options: <int?>[null, ...controller.gridSizeOptions],
+                  selectedOption: controller.selectedGridSize.value,
+                  labelBuilder: controller.gridSizeLabel,
+                  onSelected: controller.selectGridSize,
+                ),
+                const SizedBox(height: 28),
                 if (controller.isLoading.value)
                   const StatsFeedbackSection(
                     title: '正在汇总训练成绩',
-                    message: '本地训练记录读取完成后，会自动展示核心指标与模式表现。',
+                    message: '本地训练记录读取完成后，会自动展示筛选后的核心指标与模式分析。',
                   )
                 else if (controller.loadError.value != null)
                   StatsErrorSection(
@@ -54,13 +88,8 @@ class StatsView extends GetView<StatsController> {
                       message: controller.emptyMessage,
                     )
                   else ...<Widget>[
-                    StatsHighlightsSection(
-                      bestRecord: controller.bestRecordHighlight!,
-                      latestRecord: controller.latestRecordHighlight!,
-                    ),
-                    const SizedBox(height: 28),
-                    StatsModeInsightsSection(
-                      insights: controller.modeInsights,
+                    StatsModeAnalysisSection(
+                      analyses: controller.modeAnalyses,
                       trailing: '${controller.recordCount} 次训练',
                     ),
                   ],

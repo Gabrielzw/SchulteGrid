@@ -6,12 +6,13 @@ import 'package:get/get.dart';
 
 import '../../../data/models/training_record.dart';
 import '../../../data/repositories/training_record_repository.dart';
+import '../../../domain/enums/record_mode_filter.dart';
+import '../../../domain/enums/record_order_filter.dart';
 import '../../../domain/enums/record_time_range.dart';
 import '../../../domain/enums/training_mode.dart';
 import '../../../domain/enums/training_order.dart';
+import '../../../domain/models/training_record_filter_support.dart';
 import '../../training/models/training_session_support.dart';
-import '../models/history_mode_filter.dart';
-import '../models/history_order_filter.dart';
 import '../models/history_record_view_data.dart';
 
 typedef HistoryNowProvider = DateTime Function();
@@ -25,14 +26,13 @@ class HistoryController extends GetxController {
 
   static const String _emptyDurationLabel = '--';
   static const String _baseRecordsSubtitle = '按完成时间倒序排列，保留模式、尺寸、用时和错误次数。';
-  static const List<int> _fallbackGridSizes = <int>[3, 4, 5, 6, 7];
 
   final TrainingRecordRepository _repository;
   final HistoryNowProvider _nowProvider;
 
-  final Rx<HistoryModeFilter> selectedModeFilter = HistoryModeFilter.all.obs;
+  final Rx<RecordModeFilter> selectedModeFilter = RecordModeFilter.all.obs;
   final RxnInt selectedGridSize = RxnInt();
-  final Rx<HistoryOrderFilter> selectedOrderFilter = HistoryOrderFilter.all.obs;
+  final Rx<RecordOrderFilter> selectedOrderFilter = RecordOrderFilter.all.obs;
   final Rx<RecordTimeRange> selectedTimeRangeFilter =
       RecordTimeRange.allTime.obs;
   final RxBool isLoading = false.obs;
@@ -45,17 +45,13 @@ class HistoryController extends GetxController {
     unawaited(refreshRecords());
   }
 
-  List<HistoryModeFilter> get modeFilters => HistoryModeFilter.values;
+  List<RecordModeFilter> get modeFilters => RecordModeFilter.values;
 
-  List<HistoryOrderFilter> get orderFilters => HistoryOrderFilter.values;
+  List<RecordOrderFilter> get orderFilters => RecordOrderFilter.values;
 
   List<RecordTimeRange> get timeRangeFilters => RecordTimeRange.values;
 
-  List<int> get gridSizeOptions {
-    final options = <int>{..._fallbackGridSizes, ..._recordGridSizes}.toList();
-    options.sort();
-    return options;
-  }
+  List<int> get gridSizeOptions => buildGridSizeOptions(_records);
 
   List<TrainingRecord> get filteredRecords {
     final now = _nowProvider();
@@ -151,13 +147,13 @@ class HistoryController extends GetxController {
     if (selectedTimeRangeFilter.value != RecordTimeRange.allTime) {
       labels.add(selectedTimeRangeFilter.value.label);
     }
-    if (selectedModeFilter.value != HistoryModeFilter.all) {
+    if (selectedModeFilter.value != RecordModeFilter.all) {
       labels.add(selectedModeFilter.value.label);
     }
     if (selectedGridSize.value != null) {
       labels.add(gridSizeLabel(selectedGridSize.value));
     }
-    if (selectedOrderFilter.value != HistoryOrderFilter.all) {
+    if (selectedOrderFilter.value != RecordOrderFilter.all) {
       labels.add(selectedOrderFilter.value.label);
     }
 
@@ -178,7 +174,7 @@ class HistoryController extends GetxController {
     }
   }
 
-  void selectModeFilter(HistoryModeFilter filter) {
+  void selectModeFilter(RecordModeFilter filter) {
     selectedModeFilter.value = filter;
   }
 
@@ -186,7 +182,7 @@ class HistoryController extends GetxController {
     selectedGridSize.value = gridSize;
   }
 
-  void selectOrderFilter(HistoryOrderFilter filter) {
+  void selectOrderFilter(RecordOrderFilter filter) {
     selectedOrderFilter.value = filter;
   }
 
@@ -195,11 +191,7 @@ class HistoryController extends GetxController {
   }
 
   String gridSizeLabel(int? gridSize) {
-    if (gridSize == null) {
-      return '全部';
-    }
-
-    return '$gridSize × $gridSize';
+    return formatGridSizeLabel(gridSize);
   }
 
   HistoryRecordViewData _buildRecordViewData(TrainingRecord record) {
@@ -221,20 +213,11 @@ class HistoryController extends GetxController {
     );
   }
 
-  Set<int> get _recordGridSizes {
-    return _records.map((TrainingRecord record) => record.gridSize).toSet();
-  }
-
   bool _matchesFilters(TrainingRecord record, DateTime now) {
     return selectedModeFilter.value.matches(record) &&
-        _matchesGridSize(record) &&
+        matchesGridSize(record, selectedGridSize.value) &&
         selectedOrderFilter.value.matches(record) &&
         selectedTimeRangeFilter.value.matches(record, now);
-  }
-
-  bool _matchesGridSize(TrainingRecord record) {
-    final gridSize = selectedGridSize.value;
-    return gridSize == null || record.gridSize == gridSize;
   }
 
   int _calculateAccuracy(TrainingRecord record) {

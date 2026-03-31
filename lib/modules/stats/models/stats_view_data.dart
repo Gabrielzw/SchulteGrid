@@ -14,48 +14,73 @@ class StatsSummaryMetricData {
   final IconData icon;
 }
 
-class StatsSessionHighlightData {
-  const StatsSessionHighlightData({
-    required this.title,
-    required this.caption,
-    required this.badgeLabel,
-    required this.durationLabel,
-    required this.metaLabel,
-    required this.completedAtLabel,
-    required this.primaryChipLabel,
-    required this.secondaryChipLabel,
-    required this.icon,
-    required this.tone,
-  });
+class StatsMetricValueData {
+  const StatsMetricValueData({required this.label, required this.value});
 
-  final String title;
-  final String caption;
-  final String badgeLabel;
-  final String durationLabel;
-  final String metaLabel;
-  final String completedAtLabel;
-  final String primaryChipLabel;
-  final String secondaryChipLabel;
-  final IconData icon;
-  final Color tone;
+  final String label;
+  final String value;
 }
 
-class StatsModeInsightData {
-  const StatsModeInsightData({
+class StatsTrendPointData {
+  const StatsTrendPointData({
+    required this.label,
+    required this.valueLabel,
+    required this.intensity,
+    required this.isLatest,
+  });
+
+  final String label;
+  final String valueLabel;
+  final double intensity;
+  final bool isLatest;
+}
+
+class StatsTrendInsightData {
+  const StatsTrendInsightData({
+    required this.deltaLabel,
+    required this.summary,
+    required this.caption,
+    required this.points,
+  });
+
+  final String deltaLabel;
+  final String summary;
+  final String caption;
+  final List<StatsTrendPointData> points;
+}
+
+class StatsStabilityInsightData {
+  const StatsStabilityInsightData({
+    required this.badgeLabel,
+    required this.summary,
+    required this.metrics,
+    required this.chips,
+  });
+
+  final String badgeLabel;
+  final String summary;
+  final List<StatsMetricValueData> metrics;
+  final List<String> chips;
+}
+
+class StatsModeAnalysisData {
+  const StatsModeAnalysisData({
     required this.label,
     required this.description,
     required this.sessionCountLabel,
-    required this.bestDurationLabel,
-    required this.averageDurationLabel,
     required this.icon,
     required this.tone,
+    required this.basicMetrics,
+    required this.trend,
+    required this.stability,
   });
 
   final String label;
   final String description;
   final String sessionCountLabel;
-  final String bestDurationLabel;
-  final String averageDurationLabel;
   final IconData icon;
   final Color tone;
+  final List<StatsSummaryMetricData> basicMetrics;
+  final StatsTrendInsightData trend;
+  final StatsStabilityInsightData stability;
 }

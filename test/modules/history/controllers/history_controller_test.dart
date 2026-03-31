@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:schulte_grid/data/models/training_record.dart';
+import 'package:schulte_grid/domain/enums/record_mode_filter.dart';
+import 'package:schulte_grid/domain/enums/record_order_filter.dart';
 import 'package:schulte_grid/domain/enums/record_time_range.dart';
 import 'package:schulte_grid/domain/enums/training_mode.dart';
 import 'package:schulte_grid/domain/enums/training_order.dart';
 import 'package:schulte_grid/modules/history/controllers/history_controller.dart';
-import 'package:schulte_grid/modules/history/models/history_mode_filter.dart';
-import 'package:schulte_grid/modules/history/models/history_order_filter.dart';
 
 import '../../../support/fakes/fake_training_record_repository.dart';
 
@@ -67,8 +67,8 @@ void main() {
       expect(controller.recordCount, 2);
       expect(controller.recordsSectionSubtitle, contains('30天'));
 
-      controller.selectModeFilter(HistoryModeFilter.numbers);
-      controller.selectOrderFilter(HistoryOrderFilter.ascending);
+      controller.selectModeFilter(RecordModeFilter.numbers);
+      controller.selectOrderFilter(RecordOrderFilter.ascending);
       controller.selectGridSize(5);
 
       expect(controller.recordCount, 1);

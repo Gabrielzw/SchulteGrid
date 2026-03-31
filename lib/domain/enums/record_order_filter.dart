@@ -1,22 +1,22 @@
-import '../../../data/models/training_record.dart';
-import '../../../domain/enums/training_order.dart';
+import '../../data/models/training_record.dart';
+import 'training_order.dart';
 
-enum HistoryOrderFilter {
+enum RecordOrderFilter {
   all(label: '全部'),
   ascending(label: '正序'),
   descending(label: '倒序');
 
-  const HistoryOrderFilter({required this.label});
+  const RecordOrderFilter({required this.label});
 
   final String label;
 
   bool matches(TrainingRecord record) {
     switch (this) {
-      case HistoryOrderFilter.all:
+      case RecordOrderFilter.all:
         return true;
-      case HistoryOrderFilter.ascending:
+      case RecordOrderFilter.ascending:
         return record.order == TrainingOrder.ascending.storageValue;
-      case HistoryOrderFilter.descending:
+      case RecordOrderFilter.descending:
         return record.order == TrainingOrder.descending.storageValue;
     }
   }
