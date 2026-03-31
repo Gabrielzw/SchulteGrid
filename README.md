@@ -2,7 +2,7 @@
 
 一个基于 Flutter 构建的中文舒尔特方格训练应用，聚焦注意力训练、视觉搜索与信息扫描速度提升。项目提供多种训练模式、实时成绩反馈、历史记录筛选、统计分析，以及本地 JSON 备份与恢复能力。
 
-![应用界面预览](setup.jpg)
+<img src="setup.jpg" alt="应用界面预览" width="200">
 
 ## 功能概览
 
@@ -100,40 +100,12 @@ flutter run -d <device_id>
 - 主题模式使用 SharedPreferences 持久化。
 - 备份文件为 JSON，包含版本号、创建时间、训练记录和主题配置。
 
-## 开发与验证
-
-### 运行测试
-
-```bash
-flutter test
-```
-
-### 静态检查
-
-```bash
-flutter analyze
-```
-
-### 重新生成 Isar 代码
-
-当你修改 `lib/data/models/training_record.dart` 这类带代码生成的数据模型时，执行：
-
-```bash
-dart run build_runner build --delete-conflicting-outputs
-```
-
-## 获取帮助
-
-- 产品与视觉设计方向见 [DESIGN.md](DESIGN.md)。
-- Flutter 环境异常可先运行 `flutter doctor` 排查。
-- 功能问题、缺陷或使用疑问，建议在当前仓库的 Issue 中附上设备信息、Flutter 版本和复现步骤。
-
 ## 维护与贡献
 
 - 本项目由当前仓库所有者维护。
 - 欢迎通过 Issue 或 Pull Request 提交改进。
 - 提交代码前请确保 `flutter test` 通过，并在模型变更时同步提交生成文件。
 
-## 许可
+## 开源许可
 
-仓库当前未包含 `LICENSE` 文件。在获得维护者明确授权前，请不要将代码用于再分发或商用。
+本项目基于 `MIT License` 开源，详见 `LICENSE`。
